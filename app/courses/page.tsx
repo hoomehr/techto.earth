@@ -1,10 +1,36 @@
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, BookOpen, Clock, Star, Users } from "lucide-react"
+import { ArrowRight, BookOpen } from "lucide-react"
+import { createClient } from "@/utils/supabase/server"
+import CourseCard from "@/components/courses/course-card"
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  const supabase = createClient()
+
+  // Fetch published courses
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+
+  // Group courses by category
+  const categories = [
+    {
+      id: "farming",
+      name: "Farming & Agriculture",
+      description: "Sustainable farming, permaculture, and crop management",
+    },
+    {
+      id: "restaurant",
+      name: "Restaurant & Food Service",
+      description: "Restaurant management, farm-to-table, culinary skills",
+    },
+    { id: "crafts", name: "Craftsmanship & Trades", description: "Woodworking, metalworking, and traditional crafts" },
+    { id: "business", name: "Business & Entrepreneurship", description: "Starting and running earth-based businesses" },
+  ]
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -33,79 +59,17 @@ export default function CoursesPage() {
         <div className="container">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Featured Courses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Introduction to Permaculture",
-                description: "Learn the fundamentals of permaculture design for sustainable farming.",
-                image: "/placeholder.svg?height=200&width=400",
-                category: "Farming",
-                duration: "6 weeks",
-                level: "Beginner",
-                rating: 4.8,
-                students: 1245,
-              },
-              {
-                title: "Farm-to-Table Restaurant Management",
-                description: "Start and run a successful restaurant with sustainable sourcing practices.",
-                image: "/placeholder.svg?height=200&width=400",
-                category: "Restaurants",
-                duration: "8 weeks",
-                level: "Intermediate",
-                rating: 4.7,
-                students: 892,
-              },
-              {
-                title: "Organic Market Gardening",
-                description: "Build a profitable small-scale organic vegetable production business.",
-                image: "/placeholder.svg?height=200&width=400",
-                category: "Farming",
-                duration: "10 weeks",
-                level: "Intermediate",
-                rating: 4.9,
-                students: 1567,
-              },
-            ].map((course, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
-                <div className="relative h-48 w-full">
-                  <Image src={course.image || "/placeholder.svg"} alt={course.title} fill className="object-cover" />
-                  <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded">
-                    {course.category}
-                  </div>
-                </div>
-                <CardHeader>
-                  <CardTitle>{course.title}</CardTitle>
-                  <CardDescription>{course.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4 text-green-600" />
-                      {course.duration}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-500" />
-                      {course.rating} ({course.rating * 100} reviews)
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4 text-green-600" />
-                      {course.students} students
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-sm font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
-                      {course.level}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Course</Button>
-                </CardFooter>
-              </Card>
-            ))}
+            {courses && courses.length > 0 ? (
+              courses.slice(0, 3).map((course) => <CourseCard key={course.id} course={course} />)
+            ) : (
+              <div className="col-span-3 text-center py-12">
+                <p className="text-gray-500">No courses available yet. Check back soon!</p>
+              </div>
+            )}
           </div>
           <div className="mt-12 text-center">
             <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50">
-              <Link href="#" className="flex items-center gap-2">
+              <Link href="#all-courses" className="flex items-center gap-2">
                 View All Courses <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -114,54 +78,37 @@ export default function CoursesPage() {
       </section>
 
       {/* Course Categories */}
-      <section className="py-16 bg-green-50">
+      <section className="py-16 bg-green-50" id="all-courses">
         <div className="container">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Course Categories</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "Farming & Agriculture",
-                description: "Sustainable farming, permaculture, and crop management",
-                icon: <BookOpen className="h-6 w-6 text-green-600" />,
-                courses: 24,
-              },
-              {
-                title: "Restaurant & Food Service",
-                description: "Restaurant management, farm-to-table, culinary skills",
-                icon: <BookOpen className="h-6 w-6 text-yellow-600" />,
-                courses: 18,
-              },
-              {
-                title: "Craftsmanship & Trades",
-                description: "Woodworking, metalworking, and traditional crafts",
-                icon: <BookOpen className="h-6 w-6 text-green-600" />,
-                courses: 15,
-              },
-              {
-                title: "Business & Entrepreneurship",
-                description: "Starting and running earth-based businesses",
-                icon: <BookOpen className="h-6 w-6 text-yellow-600" />,
-                courses: 12,
-              },
-            ].map((category, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-2">
-                    {category.icon}
-                  </div>
-                  <CardTitle>{category.title}</CardTitle>
-                  <CardDescription>{category.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600">{category.courses} courses</p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" className="w-full text-green-700 hover:bg-green-100 hover:text-green-800">
-                    Browse Category
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+            {categories.map((category, index) => {
+              const categoryCount = courses?.filter((course) => course.category === category.id).length || 0
+
+              return (
+                <Card key={category.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-2">
+                      <BookOpen className={`h-6 w-6 ${index % 2 === 0 ? "text-green-600" : "text-yellow-600"}`} />
+                    </div>
+                    <CardTitle>{category.name}</CardTitle>
+                    <CardDescription>{category.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600">{categoryCount} courses</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button
+                      variant="ghost"
+                      className="w-full text-green-700 hover:bg-green-100 hover:text-green-800"
+                      asChild
+                    >
+                      <Link href={`/courses?category=${category.id}`}>Browse Category</Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -240,8 +187,8 @@ export default function CoursesPage() {
           <p className="max-w-2xl mx-auto text-lg text-green-50 mb-8">
             Join our community of tech professionals transitioning to fulfilling earth-based careers.
           </p>
-          <Button size="lg" className="bg-white text-green-700 hover:bg-green-50">
-            Enroll Now
+          <Button size="lg" className="bg-white text-green-700 hover:bg-green-50" asChild>
+            <Link href="/auth">Enroll Now</Link>
           </Button>
         </div>
       </section>
