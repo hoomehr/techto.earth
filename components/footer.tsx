@@ -40,18 +40,23 @@ export default function Footer() {
                   Groups
                 </Link>
               </li>
+              <li>
+                <Link href="/blog" className="text-sm text-gray-600 hover:text-green-700">
+                  Blog
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-medium text-gray-900">Resources</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link href="#" className="text-sm text-gray-600 hover:text-green-700">
+                <Link href="/blog" className="text-sm text-gray-600 hover:text-green-700">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-gray-600 hover:text-green-700">
+                <Link href="/blog/category/success-stories" className="text-sm text-gray-600 hover:text-green-700">
                   Success Stories
                 </Link>
               </li>

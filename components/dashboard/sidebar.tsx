@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, Calendar, LayoutDashboard, Plus, Settings, Users } from "lucide-react"
+import { BookOpen, Calendar, LayoutDashboard, Plus, Settings, Users, FileText } from "lucide-react"
 
 export default function DashboardSidebar() {
   const pathname = usePathname()
@@ -33,6 +33,11 @@ export default function DashboardSidebar() {
       icon: <Users className="h-5 w-5" />,
     },
     {
+      name: "My Blog Posts",
+      href: "/dashboard/blog",
+      icon: <FileText className="h-5 w-5" />,
+    },
+    {
       name: "Create Course",
       href: "/dashboard/courses/create",
       icon: <Plus className="h-5 w-5" />,
@@ -45,6 +50,11 @@ export default function DashboardSidebar() {
     {
       name: "Create Group",
       href: "/dashboard/groups/create",
+      icon: <Plus className="h-5 w-5" />,
+    },
+    {
+      name: "Create Blog Post",
+      href: "/dashboard/blog/create",
       icon: <Plus className="h-5 w-5" />,
     },
     {
