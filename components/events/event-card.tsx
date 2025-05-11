@@ -10,6 +10,7 @@ import { createClient } from "@/utils/supabase/client"
 import { useAuth } from "@/context/auth-context"
 import { Loader2 } from "lucide-react"
 import { formatDate, formatTime } from "@/lib/utils"
+import Link from "next/link"
 
 type EventCardProps = {
   event: any
@@ -55,55 +56,60 @@ export default function EventCard({ event }: EventCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
-      <div className="relative h-48 w-full">
-        <Image
-          src={event.image_url || "/placeholder.svg?height=200&width=400"}
-          alt={event.title}
-          fill
-          className="object-cover"
-        />
-      </div>
-      <CardHeader>
-        <CardTitle>{event.title}</CardTitle>
-        <CardDescription>{event.description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-green-600" />
-            {formatDate(event.start_date)}
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-green-600" />
-            {formatTime(event.start_date)} - {formatTime(event.end_date)}
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-green-600" />
-            {event.location}
-          </div>
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-green-600" />
-            {Math.floor(Math.random() * 100) + 10} attending
-          </div>
+    <Link href={`/events/${event.id}`} className="block hover:no-underline">
+      <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
+        <div className="relative h-48 w-full">
+          <Image
+            src={event.image_url || "/placeholder.svg?height=200&width=400"}
+            alt={event.title}
+            fill
+            className="object-cover"
+          />
         </div>
-      </CardContent>
-      <CardFooter>
-        <Button
-          className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
-          onClick={handleRegister}
-          disabled={registering}
-        >
-          {registering ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Registering...
-            </>
-          ) : (
-            "Register Now"
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+        <CardHeader>
+          <CardTitle>{event.title}</CardTitle>
+          <CardDescription>{event.description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-green-600" />
+              {formatDate(event.start_date)}
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-green-600" />
+              {formatTime(event.start_date)} - {formatTime(event.end_date)}
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-green-600" />
+              {event.location}
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-green-600" />
+              {Math.floor(Math.random() * 100) + 10} attending
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+            onClick={(e) => {
+              e.preventDefault()
+              handleRegister()
+            }}
+            disabled={registering}
+          >
+            {registering ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Registering...
+              </>
+            ) : (
+              "Register Now"
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
   )
 }
