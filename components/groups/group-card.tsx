@@ -10,6 +10,7 @@ import { createClient } from "@/utils/supabase/client"
 import { useAuth } from "@/context/auth-context"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
+import { getImageUrl } from "@/lib/image-utils"
 
 type GroupCardProps = {
   group: any
@@ -56,13 +57,20 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   return (
     <Link href={`/groups/${group.id}`} className="block hover:no-underline">
-      <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
-        <div className="relative h-48 w-full">
+      <Card className="overflow-hidden transition-all duration-300 h-full group hover:shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:translate-y-[-5px]">
+        <div className="relative h-48 w-full overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10" />
           <Image
-            src={group.image_url || "/placeholder.svg?height=200&width=400"}
-            alt={group.name}
+            src={getImageUrl(group.image_url, group.category) || "/placeholder.svg?height=400&width=600"}
+            alt={group.name || "Group image"}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement
+              target.onerror = null // Prevent infinite loop
+              target.src = "/placeholder.svg?height=400&width=600"
+            }}
           />
         </div>
         <CardHeader>

@@ -60,7 +60,11 @@ export default async function CoursesPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Featured Courses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses && courses.length > 0 ? (
-              courses.slice(0, 3).map((course) => <CourseCard key={course.id} course={course} />)
+              courses.slice(0, 3).map((course) => (
+                <div key={course.id} className="transform transition-all duration-300 hover:translate-y-[-5px]">
+                  <CourseCard course={course} />
+                </div>
+              ))
             ) : (
               <div className="col-span-3 text-center py-12">
                 <p className="text-gray-500">No courses available yet. Check back soon!</p>

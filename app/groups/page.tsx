@@ -51,7 +51,11 @@ export default async function GroupsPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Featured Groups</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {groups && groups.length > 0 ? (
-              groups.slice(0, 3).map((group) => <GroupCard key={group.id} group={group} />)
+              groups.slice(0, 3).map((group) => (
+                <div key={group.id} className="transform transition-all duration-300 hover:translate-y-[-5px]">
+                  <GroupCard key={group.id} group={group} />
+                </div>
+              ))
             ) : (
               <div className="col-span-3 text-center py-12">
                 <p className="text-gray-500">No groups available yet. Be the first to create one!</p>

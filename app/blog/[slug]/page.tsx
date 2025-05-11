@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { Metadata } from "next"
 import { marked } from "marked"
+import { getImageUrl } from "@/lib/image-utils"
 
 interface BlogPostPageProps {
   params: {
@@ -99,7 +100,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {post.featured_image && (
           <div className="relative aspect-video w-full mb-8">
             <Image
-              src={post.featured_image || "/placeholder.svg"}
+              src={getImageUrl(post.featured_image, undefined, post.slug) || "/placeholder.svg"}
               alt={post.title}
               fill
               className="object-cover rounded-lg"

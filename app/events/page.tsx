@@ -77,7 +77,11 @@ export default async function EventsPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Upcoming Events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events && events.length > 0 ? (
-              events.slice(0, 3).map((event) => <EventCard key={event.id} event={event} />)
+              events.slice(0, 3).map((event) => (
+                <div key={event.id} className="transform transition-all duration-300 hover:translate-y-[-5px]">
+                  <EventCard key={event.id} event={event} />
+                </div>
+              ))
             ) : (
               <div className="col-span-3 text-center py-12">
                 <p className="text-gray-500">No events available yet. Check back soon!</p>

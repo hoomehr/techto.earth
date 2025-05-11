@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight, Calendar } from "lucide-react"
+import { getImageUrl } from "@/lib/image-utils"
 
 interface BlogCategoryPageProps {
   params: {
@@ -74,7 +75,7 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
           <Card key={post.id} className="overflow-hidden hover:shadow-md transition-shadow">
             <div className="relative h-48 w-full">
               <Image
-                src={post.featured_image || "/placeholder.svg?height=200&width=400"}
+                src={getImageUrl(post.featured_image, undefined, post.slug) || "/placeholder.svg"}
                 alt={post.title}
                 fill
                 className="object-cover"

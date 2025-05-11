@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Globe, MapPin, MessageSquare, Users, ArrowLeft } from "lucide-react"
 import JoinGroupButton from "@/components/groups/join-group-button"
 import Link from "next/link"
+import { getImageUrl } from "@/lib/image-utils"
 
 export default async function GroupDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -46,12 +47,13 @@ export default async function GroupDetailPage({ params }: { params: { id: string
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <div className="relative aspect-video w-full mb-6">
+          <div className="relative aspect-video w-full mb-6 rounded-lg overflow-hidden shadow-[0_5px_15px_rgba(22,163,74,0.2)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
             <Image
-              src={group.image_url || "/placeholder.svg?height=400&width=800"}
+              src={getImageUrl(group.image_url, group.category) || "/placeholder.svg"}
               alt={group.name}
               fill
-              className="object-cover rounded-lg"
+              className="object-cover"
             />
           </div>
 

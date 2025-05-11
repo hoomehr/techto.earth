@@ -10,6 +10,7 @@ import { createClient } from "@/utils/supabase/client"
 import { useAuth } from "@/context/auth-context"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
+import { getImageUrl } from "@/lib/image-utils"
 
 type CourseCardProps = {
   course: any
@@ -63,17 +64,25 @@ export default function CourseCard({ course }: CourseCardProps) {
 
   return (
     <Link href={`/courses/${course.id}`} className="block hover:no-underline">
-      <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
-        <div className="relative h-48 w-full">
+      <Card className="overflow-hidden transition-all duration-300 h-full group hover:shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:translate-y-[-5px]">
+        <div className="relative h-48 w-full overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10" />
           <Image
-            src={course.image_url || "/placeholder.svg?height=200&width=400"}
-            alt={course.title}
+            src={
+              course.category === "farming"
+                ? "https://www.poultryworld.net/app/uploads/2021/04/001_756_IMG_eggfarm1.jpg"
+                : getImageUrl(course.image_url, course.category) || "/placeholder.svg?height=400&width=600"
+            }
+            alt={course.title || "Course image"}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement
+              target.onerror = null // Prevent infinite loop
+              target.src = "/placeholder.svg?height=400&width=600"
+            }}
           />
-          <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded">
-            {categoryMap[course.category] || course.category}
-          </div>
         </div>
         <CardHeader>
           <CardTitle>{course.title}</CardTitle>

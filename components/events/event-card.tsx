@@ -11,6 +11,7 @@ import { useAuth } from "@/context/auth-context"
 import { Loader2 } from "lucide-react"
 import { formatDate, formatTime } from "@/lib/utils"
 import Link from "next/link"
+import { getImageUrl } from "@/lib/image-utils"
 
 type EventCardProps = {
   event: any
@@ -57,13 +58,14 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/events/${event.id}`} className="block hover:no-underline">
-      <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
-        <div className="relative h-48 w-full">
+      <Card className="overflow-hidden transition-all duration-300 h-full group hover:shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:translate-y-[-5px]">
+        <div className="relative h-48 w-full overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10" />
           <Image
-            src={event.image_url || "/placeholder.svg?height=200&width=400"}
+            src={getImageUrl(event.image_url, event.category) || "/placeholder.svg"}
             alt={event.title}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
         <CardHeader>
