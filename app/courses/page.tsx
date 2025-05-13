@@ -14,6 +14,7 @@ export default async function CoursesPage() {
     .select("*")
     .eq("is_published", true)
     .order("created_at", { ascending: false })
+    .limit(20) // Increased limit to ensure we get all courses
 
   // Group courses by category
   const categories = [
@@ -45,7 +46,9 @@ export default async function CoursesPage() {
               hands-on careers.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="bg-green-600 hover:bg-green-700 text-white">Browse All Courses</Button>
+              <Button className="bg-green-600 hover:bg-green-700 text-white" asChild>
+                <a href="#all-courses">Browse All Courses</a>
+              </Button>
               <Button variant="outline" className="border-yellow-500 text-yellow-600 hover:bg-yellow-50">
                 Filter by Category
               </Button>
@@ -54,35 +57,33 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      {/* Featured Courses */}
-      <section className="py-16">
+      {/* All Courses Section */}
+      <section className="py-16" id="all-courses">
         <div className="container">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Featured Courses</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses && courses.length > 0 ? (
-              courses.slice(0, 3).map((course) => (
-                <div key={course.id} className="transform transition-all duration-300 hover:translate-y-[-5px]">
-                  <CourseCard course={course} />
-                </div>
-              ))
-            ) : (
-              <div className="col-span-3 text-center py-12">
-                <p className="text-gray-500">No courses available yet. Check back soon!</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">All Courses</h2>
+          {courses && courses.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {courses.map((course) => (
+                  <div key={course.id} className="transform transition-all duration-300 hover:translate-y-[-5px]">
+                    <CourseCard course={course} />
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-          <div className="mt-12 text-center">
-            <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50">
-              <Link href="#all-courses" className="flex items-center gap-2">
-                View All Courses <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+              <div className="mt-6 text-center">
+                <p className="text-gray-600">Showing all {courses.length} courses</p>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No courses available yet. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Course Categories */}
-      <section className="py-16 bg-green-50" id="all-courses">
+      <section className="py-16 bg-green-50">
         <div className="container">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Course Categories</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

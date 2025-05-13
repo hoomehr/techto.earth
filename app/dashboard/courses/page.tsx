@@ -63,7 +63,7 @@ export default async function DashboardCoursesPage() {
                 if (!course) return null
                 
                 return (
-                  <Card key={enrollment.id} className="overflow-hidden">
+                  <Card key={enrollment.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
                     <div className="h-48 bg-gradient-to-r from-green-500 to-green-700 relative flex items-center justify-center">
                       <BookOpen className="h-16 w-16 text-white/50" />
                     </div>
@@ -92,7 +92,7 @@ export default async function DashboardCoursesPage() {
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 text-center">
               <p className="text-gray-500 mb-4">You haven't enrolled in any courses yet.</p>
               <Button className="bg-green-600 hover:bg-green-700" asChild>
                 <Link href="/courses">Browse Courses</Link>
@@ -106,7 +106,7 @@ export default async function DashboardCoursesPage() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {publicCourses.map((course) => (
-                  <Card key={course.id} className="overflow-hidden">
+                  <Card key={course.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
                     <div className="h-32 bg-gradient-to-r from-green-500 to-green-700 relative flex items-center justify-center">
                       <BookOpen className="h-12 w-12 text-white/50" />
                     </div>
@@ -131,7 +131,7 @@ export default async function DashboardCoursesPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 text-center">
               <p className="text-gray-500">No courses available at the moment.</p>
             </div>
           )}

@@ -14,12 +14,30 @@ export default async function DashboardEventsPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Fetch user's registered events
-  const { data: registrations } = await supabase
+  // Fetch user's registered events with proper join
+  const { data: registeredEvents, error: registrationError } = await supabase
     .from("event_registrations")
-    .select("*, events(*)")
+    .select(`
+      id, 
+      user_id, 
+      event_id, 
+      status, 
+      registered_at,
+      event:event_id (
+        id, 
+        title, 
+        description, 
+        location,
+        start_date,
+        end_date,
+        image_url,
+        category
+      )
+    `)
     .eq("user_id", user?.id)
-    .order("created_at", { ascending: false })
+    .order("registered_at", { ascending: false })
+
+  console.log("Event registrations query result:", { registeredEvents, registrationError })
 
   // Fetch upcoming events for discovery
   const { data: upcomingEvents } = await supabase
@@ -41,16 +59,16 @@ export default async function DashboardEventsPage() {
         </TabsList>
 
         <TabsContent value="registered">
-          {registrations && registrations.length > 0 ? (
+          {registeredEvents && registeredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {registrations.map((registration) => {
-                const event = registration.events
+              {registeredEvents.map((registration) => {
+                const event = registration.event
                 if (!event) return null
                 
                 const isPastEvent = new Date(event.end_date) < new Date()
                 
                 return (
-                  <Card key={registration.id} className="overflow-hidden">
+                  <Card key={registration.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-yellow-200/30">
                     <div className="h-24 bg-gradient-to-r from-yellow-500 to-yellow-700 relative flex items-center justify-center">
                       <Calendar className="h-12 w-12 text-white/50" />
                     </div>
@@ -86,7 +104,7 @@ export default async function DashboardEventsPage() {
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 text-center">
               <p className="text-gray-500 mb-4">You haven't registered for any events yet.</p>
               <Button className="bg-yellow-500 hover:bg-yellow-600" asChild>
                 <Link href="/events">Browse Events</Link>
@@ -100,7 +118,7 @@ export default async function DashboardEventsPage() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {upcomingEvents.map((event) => (
-                  <Card key={event.id} className="overflow-hidden">
+                  <Card key={event.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-yellow-200/30">
                     <div className="h-24 bg-gradient-to-r from-yellow-500 to-yellow-700 relative flex items-center justify-center">
                       <Calendar className="h-12 w-12 text-white/50" />
                     </div>
@@ -135,7 +153,7 @@ export default async function DashboardEventsPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 text-center">
               <p className="text-gray-500">No upcoming events at the moment.</p>
             </div>
           )}

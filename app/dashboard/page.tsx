@@ -62,7 +62,7 @@ export default async function DashboardPage() {
       )}
 
       {error && (
-        <Card className="mb-8 bg-yellow-50 border-yellow-200">
+        <Card className="mb-8 bg-yellow-50 border-yellow-200 shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-yellow-200/40">
           <CardHeader>
             <CardTitle className="text-yellow-800">Setup Required</CardTitle>
           </CardHeader>
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">My Courses</CardTitle>
             <BookOpen className="h-4 w-4 text-green-600" />
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-yellow-200/40">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">My Events</CardTitle>
             <Calendar className="h-4 w-4 text-yellow-600" />
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">My Groups</CardTitle>
             <Users className="h-4 w-4 text-green-600" />
@@ -111,7 +111,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="space-y-6">
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader>
             <CardTitle>Welcome to TechTo.Earth</CardTitle>
             <CardDescription>Your journey from tech to earth-based careers starts here</CardDescription>

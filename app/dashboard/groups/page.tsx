@@ -62,7 +62,7 @@ export default async function DashboardGroupsPage() {
                 if (!group) return null
                 
                 return (
-                  <Card key={membership.id} className="overflow-hidden">
+                  <Card key={membership.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
                     <div className="h-32 bg-gradient-to-r from-green-500 to-green-700 relative flex items-center justify-center">
                       <Users className="h-12 w-12 text-white/50" />
                     </div>
@@ -93,7 +93,7 @@ export default async function DashboardGroupsPage() {
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 text-center">
               <p className="text-gray-500 mb-4">You haven't joined any groups yet.</p>
               <Button className="bg-green-600 hover:bg-green-700" asChild>
                 <Link href="/groups">Browse Groups</Link>
@@ -107,7 +107,7 @@ export default async function DashboardGroupsPage() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {popularGroups.map((group) => (
-                  <Card key={group.id} className="overflow-hidden">
+                  <Card key={group.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
                     <div className="h-32 bg-gradient-to-r from-green-500 to-green-700 relative flex items-center justify-center">
                       <Globe className="h-12 w-12 text-white/50" />
                     </div>
@@ -142,7 +142,7 @@ export default async function DashboardGroupsPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 text-center">
               <p className="text-gray-500">No groups available at the moment.</p>
             </div>
           )}
