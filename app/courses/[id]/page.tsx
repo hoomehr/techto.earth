@@ -7,11 +7,18 @@ import EnrollButton from "@/components/courses/enroll-button"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
 
-export default async function CourseDetailPage({ params }: { params: { id: string } }) {
+type CourseDetailPageProps = {
+  params: {
+    id: string;
+  };
+}
+
+export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
+  const courseId = params.id;
   const supabase = await createClient()
 
   // Fetch course details
-  const { data: course } = await supabase.from("courses").select("*").eq("id", params.id).single()
+  const { data: course } = await supabase.from("courses").select("*").eq("id", courseId).single()
 
   if (!course || !course.is_published) {
     notFound()

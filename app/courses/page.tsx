@@ -1,20 +1,66 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, BookOpen } from "lucide-react"
+import { ArrowRight, BookOpen, Filter, Search } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import CourseCard from "@/components/courses/course-card"
 
-export default async function CoursesPage() {
+// Define props type for the page
+type CoursesPageProps = {
+  searchParams?: {
+    category?: string;
+    level?: string;
+    price?: string;
+    search?: string;
+  };
+};
+
+export default async function CoursesPage({ searchParams = {} }: CoursesPageProps) {
   const supabase = await createClient()
+  
+  // Get filters from search params
+  const categoryFilter = searchParams.category || ''
+  const levelFilter = searchParams.level || ''
+  const priceFilter = searchParams.price || ''
+  const searchQuery = searchParams.search || ''
 
   // Fetch published courses
-  const { data: courses } = await supabase
+  let query = supabase
     .from("courses")
     .select("*")
     .eq("is_published", true)
+    
+  // Apply category filter if present
+  if (categoryFilter) {
+    query = query.eq("category", categoryFilter)
+  }
+  
+  // Apply level filter if present
+  if (levelFilter) {
+    query = query.eq("level", levelFilter)
+  }
+  
+  // Apply price filter if present
+  if (priceFilter === 'free') {
+    query = query.eq("price", 0)
+  } else if (priceFilter === 'paid') {
+    query = query.gt("price", 0)
+  }
+  
+  // Apply search if present
+  if (searchQuery) {
+    query = query.ilike("title", `%${searchQuery}%`)
+  }
+  
+  const { data: allCourses } = await query
     .order("created_at", { ascending: false })
     .limit(20) // Increased limit to ensure we get all courses
+
+  const courses = allCourses || []
+  
+  // Initially visible courses (first 9)
+  const initialCourses = courses.slice(0, 9)
+  const hasMoreCourses = courses.length > 9
 
   // Group courses by category
   const categories = [
@@ -30,6 +76,13 @@ export default async function CoursesPage() {
     },
     { id: "crafts", name: "Craftsmanship & Trades", description: "Woodworking, metalworking, and traditional crafts" },
     { id: "business", name: "Business & Entrepreneurship", description: "Starting and running earth-based businesses" },
+  ]
+  
+  // Level options
+  const levels = [
+    { id: "beginner", name: "Beginner" },
+    { id: "intermediate", name: "Intermediate" },
+    { id: "advanced", name: "Advanced" },
   ]
 
   return (
@@ -57,26 +110,132 @@ export default async function CoursesPage() {
         </div>
       </section>
 
+      {/* Filter Bar */}
+      <section className="sticky top-16 z-30 bg-white border-b border-gray-200 shadow-sm py-4">
+        <div className="container">
+          <form action="/courses" method="get" className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            {/* Search Bar */}
+            <div className="relative w-full md:w-64">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                name="search"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="Search courses..."
+                defaultValue={searchQuery}
+              />
+            </div>
+            
+            {/* Filters */}
+            <div className="flex flex-wrap gap-2 items-center">
+              {/* Category Filter */}
+              <div className="relative inline-block">
+                <select 
+                  name="category"
+                  className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                  defaultValue={categoryFilter}
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <Filter className="h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+              
+              {/* Level Filter */}
+              <div className="relative inline-block">
+                <select 
+                  name="level"
+                  className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                  defaultValue={levelFilter}
+                >
+                  <option value="">All Levels</option>
+                  {levels.map((level) => (
+                    <option key={level.id} value={level.id}>{level.name}</option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <Filter className="h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+              
+              {/* Price Filter */}
+              <div className="relative inline-block">
+                <select 
+                  name="price"
+                  className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                  defaultValue={priceFilter}
+                >
+                  <option value="">Any Price</option>
+                  <option value="free">Free</option>
+                  <option value="paid">Paid</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <Filter className="h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+              
+              {/* Apply Filters Button */}
+              <Button type="submit" className="text-sm bg-green-600 hover:bg-green-700 text-white">
+                Apply Filters
+              </Button>
+              
+              {/* Clear Filters */}
+              <Link href="/courses" passHref>
+                <Button type="button" variant="outline" className="text-sm border-gray-300 text-gray-600 hover:bg-gray-50">
+                  Clear Filters
+                </Button>
+              </Link>
+            </div>
+          </form>
+        </div>
+      </section>
+
       {/* All Courses Section */}
       <section className="py-16" id="all-courses">
         <div className="container">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">All Courses</h2>
-          {courses && courses.length > 0 ? (
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+            {categoryFilter 
+              ? `${categories.find(c => c.id === categoryFilter)?.name || 'Category'} Courses` 
+              : 'All Courses'
+            }
+            {searchQuery && <span className="text-lg font-normal ml-2">matching "{searchQuery}"</span>}
+          </h2>
+          {initialCourses && initialCourses.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {courses.map((course) => (
-                  <div key={course.id} className="transform transition-all duration-300 hover:translate-y-[-5px]">
+                {initialCourses.map((course) => (
+                  <div key={course.id} className="transform transition-all duration-300">
                     <CourseCard course={course} />
                   </div>
                 ))}
               </div>
+              
+              {/* Load More Button */}
+              {hasMoreCourses && (
+                <div className="mt-12 text-center">
+                  <Link href={`/courses/all${categoryFilter ? `?category=${categoryFilter}` : ''}`} passHref>
+                    <Button className="bg-green-600 hover:bg-green-700 text-white px-8">
+                      Load All Courses <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
+              
               <div className="mt-6 text-center">
-                <p className="text-gray-600">Showing all {courses.length} courses</p>
+                <p className="text-gray-600">
+                  Showing {initialCourses.length} of {courses.length} courses
+                </p>
               </div>
             </>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500">No courses available yet. Check back soon!</p>
+              <p className="text-gray-500">No courses available for these filters. Try different criteria!</p>
             </div>
           )}
         </div>
