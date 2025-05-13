@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/server"
 import CourseCard from "@/components/courses/course-card"
 
 export default async function CoursesPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Fetch published courses
   const { data: courses } = await supabase

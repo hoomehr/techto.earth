@@ -9,7 +9,7 @@ import { formatDate, formatTime } from "@/lib/utils"
 import { getImageUrl } from "@/lib/image-utils"
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Fetch event details
   const { data: event } = await supabase.from("events").select("*").eq("id", params.id).single()

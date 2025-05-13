@@ -1,23 +1,79 @@
 import { createClient } from "@/utils/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Calendar, Users } from "lucide-react"
+import EmailVerificationBanner from "@/components/dashboard/email-verification-banner"
 
 export default async function DashboardPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Get user's courses, events, and groups
-  const { data: enrollments } = await supabase.from("course_enrollments").select("*").eq("user_id", user?.id)
+  // Default values in case of database errors
+  let enrollments = []
+  let registrations = []
+  let memberships = []
+  let error = null
 
-  const { data: registrations } = await supabase.from("event_registrations").select("*").eq("user_id", user?.id)
+  try {
+    // Try to get user's courses, events, and groups
+    const { data: enrollmentsData, error: enrollmentsError } = 
+      await supabase.from("course_enrollments").select("*").eq("user_id", user?.id)
+    
+    if (!enrollmentsError) {
+      enrollments = enrollmentsData || []
+    }
 
-  const { data: memberships } = await supabase.from("group_memberships").select("*").eq("user_id", user?.id)
+    const { data: registrationsData, error: registrationsError } = 
+      await supabase.from("event_registrations").select("*").eq("user_id", user?.id)
+    
+    if (!registrationsError) {
+      registrations = registrationsData || []
+    }
+
+    const { data: membershipsData, error: membershipsError } = 
+      await supabase.from("group_memberships").select("*").eq("user_id", user?.id)
+    
+    if (!membershipsError) {
+      memberships = membershipsData || []
+    }
+
+    // Check if we have any table errors
+    if (enrollmentsError?.code === '42P01' || 
+        registrationsError?.code === '42P01' || 
+        membershipsError?.code === '42P01') {
+      error = "Database tables not found. Please run the setup script.";
+    }
+  } catch (e) {
+    console.error("Error fetching user data:", e)
+    error = "Failed to load dashboard data."
+  }
+
+  // Check if email is verified (based on user metadata)
+  const isEmailVerified = user?.email_confirmed_at || user?.email_verified || 
+    (user?.app_metadata?.provider !== 'email') // Google/OAuth users are considered verified
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+
+      {!isEmailVerified && user?.email && (
+        <EmailVerificationBanner userEmail={user.email} />
+      )}
+
+      {error && (
+        <Card className="mb-8 bg-yellow-50 border-yellow-200">
+          <CardHeader>
+            <CardTitle className="text-yellow-800">Setup Required</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-yellow-700">{error}</p>
+            <p className="text-yellow-700 mt-2">
+              To set up your database tables, run: <code className="bg-yellow-100 px-2 py-1 rounded">node scripts/setup-database.js</code>
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>

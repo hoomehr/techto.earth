@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/server"
 import GroupCard from "@/components/groups/group-card"
 
 export default async function GroupsPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Fetch groups
   const { data: groups } = await supabase.from("groups").select("*").order("created_at", { ascending: false })

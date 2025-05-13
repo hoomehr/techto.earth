@@ -8,7 +8,7 @@ import EventCard from "@/components/events/event-card"
 import { formatDate } from "@/lib/utils"
 
 export default async function EventsPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Fetch published events
   const { data: events } = await supabase

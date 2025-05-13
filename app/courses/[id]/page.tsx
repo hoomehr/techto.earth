@@ -8,7 +8,7 @@ import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
 
 export default async function CourseDetailPage({ params }: { params: { id: string } }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Fetch course details
   const { data: course } = await supabase.from("courses").select("*").eq("id", params.id).single()

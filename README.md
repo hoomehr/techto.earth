@@ -10,6 +10,39 @@
 This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
 Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
 
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
+2. Set up environment variables:
+   ```bash
+   # Create a .env.local file in the project root
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+3. Run the development server:
+   ```bash
+   pnpm dev
+   ```
+
+## Google Authentication Setup
+
+1. Run the Google Auth setup script to extract your credentials:
+   ```bash
+   node scripts/setup-google-auth.js
+   ```
+
+2. Follow the instructions provided by the script to configure Google Auth in Supabase.
+
+3. Make sure your OAuth redirect URL is set correctly in both Google Cloud Console and Supabase:
+   ```
+   https://your-domain.com/api/auth/callback
+   ```
+
 ## Deployment
 
 Your project is live at:
