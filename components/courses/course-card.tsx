@@ -90,11 +90,6 @@ export default function CourseCard({ course }: CourseCardProps) {
             }}
           />
           
-          {/* Category badge overlaid on image */}
-          <div className="absolute top-2 right-2 z-20 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
-            {categoryMap[course.category] || course.category || "Course"}
-          </div>
-          
           {/* Price badge overlaid on image */}
           <div className="absolute bottom-2 right-2 z-20">
             {course.price > 0 ? (
@@ -129,8 +124,13 @@ export default function CourseCard({ course }: CourseCardProps) {
               {Math.floor(Math.random() * 1000) + 100}
             </div>
             
-            <div className="ml-auto text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
-              {levelMap[course.level] || course.level}
+            <div className="ml-auto flex gap-2">
+              <div className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
+                {categoryMap[course.category] || course.category}
+              </div>
+              <div className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
+                {levelMap[course.level] || course.level}
+              </div>
             </div>
           </div>
         </div>
