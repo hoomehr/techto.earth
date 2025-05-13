@@ -13,18 +13,35 @@ export default async function DashboardGroupsPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Fetch user's group memberships
-  const { data: memberships } = await supabase
+  // Fetch user's group memberships with proper join
+  const { data: membershipGroups, error: membershipError } = await supabase
     .from("group_memberships")
-    .select("*, groups(*)")
+    .select(`
+      id, 
+      user_id, 
+      group_id, 
+      role, 
+      joined_at,
+      group:group_id (
+        id, 
+        name, 
+        description, 
+        image_url, 
+        location, 
+        category,
+        is_private
+      )
+    `)
     .eq("user_id", user?.id)
-    .order("created_at", { ascending: false })
+    .order("joined_at", { ascending: false })
+
+  console.log("Group memberships query result:", { membershipGroups, membershipError })
 
   // Fetch popular groups for discovery
   const { data: popularGroups } = await supabase
     .from("groups")
     .select("*")
-    .order("member_count", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(6)
 
   return (
@@ -38,10 +55,10 @@ export default async function DashboardGroupsPage() {
         </TabsList>
 
         <TabsContent value="joined">
-          {memberships && memberships.length > 0 ? (
+          {membershipGroups && membershipGroups.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {memberships.map((membership) => {
-                const group = membership.groups
+              {membershipGroups.map((membership) => {
+                const group = membership.group
                 if (!group) return null
                 
                 return (
@@ -57,7 +74,7 @@ export default async function DashboardGroupsPage() {
                       <div className="space-y-2 mb-4">
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-2 text-gray-500" />
-                          <span className="text-sm text-gray-500">{group.member_count || '0'} members</span>
+                          <span className="text-sm text-gray-500">Members</span>
                         </div>
                         {group.is_private && (
                           <Badge className="bg-gray-100 text-gray-800">

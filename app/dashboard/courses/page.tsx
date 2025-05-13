@@ -13,12 +13,29 @@ export default async function DashboardCoursesPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Fetch user's enrolled courses
-  const { data: enrollments } = await supabase
+  // Fetch user's enrolled courses with join to get course details
+  const { data: enrolledCourses, error: enrollmentError } = await supabase
     .from("course_enrollments")
-    .select("*, courses(*)")
+    .select(`
+      id, 
+      user_id, 
+      course_id, 
+      status, 
+      progress, 
+      enrolled_at,
+      course:course_id (
+        id, 
+        title, 
+        description,
+        image_url, 
+        duration, 
+        level
+      )
+    `)
     .eq("user_id", user?.id)
-    .order("created_at", { ascending: false })
+    .order("enrolled_at", { ascending: false })
+
+  console.log("Enrolled courses query result:", { enrolledCourses, enrollmentError })
 
   // Fetch public courses for discovery
   const { data: publicCourses } = await supabase
@@ -39,10 +56,10 @@ export default async function DashboardCoursesPage() {
         </TabsList>
 
         <TabsContent value="enrolled">
-          {enrollments && enrollments.length > 0 ? (
+          {enrolledCourses && enrolledCourses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {enrollments.map((enrollment) => {
-                const course = enrollment.courses
+              {enrolledCourses.map((enrollment) => {
+                const course = enrollment.course
                 if (!course) return null
                 
                 return (
@@ -52,7 +69,7 @@ export default async function DashboardCoursesPage() {
                     </div>
                     <CardHeader>
                       <CardTitle>{course.title}</CardTitle>
-                      <CardDescription>{course.short_description || course.description?.substring(0, 100)}</CardDescription>
+                      <CardDescription>{course.description?.substring(0, 100)}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex justify-between items-center">
@@ -61,7 +78,7 @@ export default async function DashboardCoursesPage() {
                           <span className="text-sm text-gray-500">{course.duration}</span>
                         </div>
                         <Badge className="bg-green-100 text-green-800">
-                          {enrollment.completion_percentage || 0}% Complete
+                          {enrollment.progress || 0}% Complete
                         </Badge>
                       </div>
                       <Button variant="ghost" className="w-full mt-4 justify-between" asChild>
@@ -95,7 +112,7 @@ export default async function DashboardCoursesPage() {
                     </div>
                     <CardHeader>
                       <CardTitle>{course.title}</CardTitle>
-                      <CardDescription>{course.short_description || course.description?.substring(0, 100)}</CardDescription>
+                      <CardDescription>{course.description?.substring(0, 100)}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Button variant="outline" className="w-full" asChild>
