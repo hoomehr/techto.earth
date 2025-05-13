@@ -6,6 +6,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Clock, ChevronRight } from "lucide-react"
 
+// Define types for our data
+type CourseType = {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  duration: string;
+  level: string;
+  category: string;
+  price: number;
+  is_published: boolean;
+}
+
+type CourseEnrollmentType = {
+  id: string;
+  user_id: string;
+  course_id: string;
+  status: string;
+  progress: number;
+  enrolled_at: string;
+  course: CourseType;
+}
+
 export default async function DashboardCoursesPage() {
   const supabase = await createClient()
 
@@ -14,7 +37,7 @@ export default async function DashboardCoursesPage() {
   } = await supabase.auth.getUser()
 
   // Fetch user's enrolled courses with join to get course details
-  const { data: enrolledCourses, error: enrollmentError } = await supabase
+  const { data: rawEnrolledCourses, error: enrollmentError } = await supabase
     .from("course_enrollments")
     .select(`
       id, 
@@ -23,27 +46,45 @@ export default async function DashboardCoursesPage() {
       status, 
       progress, 
       enrolled_at,
-      course:course_id (
+      course:courses(
         id, 
         title, 
         description,
         image_url, 
         duration, 
-        level
+        level,
+        category,
+        price,
+        is_published
       )
     `)
     .eq("user_id", user?.id)
     .order("enrolled_at", { ascending: false })
 
-  console.log("Enrolled courses query result:", { enrolledCourses, enrollmentError })
+  console.log("Enrolled courses query result:", { enrolledCourses: rawEnrolledCourses, enrollmentError })
+
+  // Process data to handle the course property correctly
+  const enrolledCourses = rawEnrolledCourses?.map(enrollment => {
+    // Supabase returns the joined courses as an array, but we need it as an object
+    // We know there is only one course per enrollment, so we take the first item
+    const courseArray = enrollment.course as unknown as CourseType[];
+    const course = courseArray && courseArray.length > 0 ? courseArray[0] : null;
+    
+    return {
+      ...enrollment,
+      course
+    } as CourseEnrollmentType;
+  }) || [];
 
   // Fetch public courses for discovery
-  const { data: publicCourses } = await supabase
+  const { data: publicCoursesRaw } = await supabase
     .from("courses")
     .select("*")
     .eq("is_published", true)
     .order("created_at", { ascending: false })
     .limit(6)
+    
+  const publicCourses = publicCoursesRaw as CourseType[] || [];
 
   return (
     <div>

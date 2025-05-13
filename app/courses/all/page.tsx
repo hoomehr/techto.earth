@@ -6,22 +6,22 @@ import CourseCard from "@/components/courses/course-card"
 
 // Define props type for the page
 type AllCoursesPageProps = {
-  searchParams?: {
-    category?: string;
-    level?: string;
-    price?: string;
-    search?: string;
-  };
+  searchParams: { [key: string]: string | string[] | undefined }
 };
 
-export default async function AllCoursesPage({ searchParams = {} }: AllCoursesPageProps) {
+export default async function AllCoursesPage({ searchParams }: AllCoursesPageProps) {
   const supabase = await createClient()
   
-  // Get filters from search params
-  const categoryFilter = searchParams.category || ''
-  const levelFilter = searchParams.level || ''
-  const priceFilter = searchParams.price || ''
-  const searchQuery = searchParams.search || ''
+  // Get filters from search params safely
+  const categoryParam = searchParams.category;
+  const levelParam = searchParams.level;
+  const priceParam = searchParams.price;
+  const searchParam = searchParams.search;
+  
+  const categoryFilter = typeof categoryParam === 'string' ? categoryParam : '';
+  const levelFilter = typeof levelParam === 'string' ? levelParam : '';
+  const priceFilter = typeof priceParam === 'string' ? priceParam : '';
+  const searchQuery = typeof searchParam === 'string' ? searchParam : '';
 
   // Fetch published courses
   let query = supabase

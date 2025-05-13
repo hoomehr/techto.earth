@@ -6,6 +6,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Users, Globe, MessageSquare, ChevronRight } from "lucide-react"
 
+// Define types for our data
+type GroupType = {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string;
+  location: string;
+  category: string;
+  is_private: boolean;
+  created_at: string;
+}
+
+type GroupMembershipType = {
+  id: string;
+  user_id: string;
+  group_id: string;
+  role: string;
+  joined_at: string;
+  group: GroupType;
+}
+
 export default async function DashboardGroupsPage() {
   const supabase = await createClient()
 
@@ -22,14 +43,15 @@ export default async function DashboardGroupsPage() {
       group_id, 
       role, 
       joined_at,
-      group:group_id (
+      group:groups(
         id, 
         name, 
         description, 
         image_url, 
         location, 
         category,
-        is_private
+        is_private,
+        created_at
       )
     `)
     .eq("user_id", user?.id)
@@ -44,6 +66,24 @@ export default async function DashboardGroupsPage() {
     .order("created_at", { ascending: false })
     .limit(6)
 
+  // Count members per group (to replace missing member_count)
+  const groupIds = popularGroups?.map(group => group.id) || []
+  let groupMemberCounts: Record<string, number> = {}
+  
+  if (groupIds.length > 0) {
+    // Use count aggregation correctly
+    for (const groupId of groupIds) {
+      const { count } = await supabase
+        .from('group_memberships')
+        .select('*', { count: 'exact', head: true })
+        .eq('group_id', groupId);
+        
+      if (count !== null) {
+        groupMemberCounts[groupId] = count;
+      }
+    }
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">My Groups</h1>
@@ -57,7 +97,7 @@ export default async function DashboardGroupsPage() {
         <TabsContent value="joined">
           {membershipGroups && membershipGroups.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {membershipGroups.map((membership) => {
+              {membershipGroups.map((membership: GroupMembershipType) => {
                 const group = membership.group
                 if (!group) return null
                 
@@ -106,7 +146,7 @@ export default async function DashboardGroupsPage() {
           {popularGroups && popularGroups.length > 0 ? (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {popularGroups.map((group) => (
+                {popularGroups.map((group: GroupType) => (
                   <Card key={group.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
                     <div className="h-32 bg-gradient-to-r from-green-500 to-green-700 relative flex items-center justify-center">
                       <Globe className="h-12 w-12 text-white/50" />
@@ -119,7 +159,7 @@ export default async function DashboardGroupsPage() {
                       <div className="space-y-2 mb-4">
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-2 text-gray-500" />
-                          <span className="text-sm text-gray-500">{group.member_count || '0'} members</span>
+                          <span className="text-sm text-gray-500">{groupMemberCounts[group.id] || 0} members</span>
                         </div>
                         <div className="flex items-center">
                           <MessageSquare className="h-4 w-4 mr-2 text-gray-500" />

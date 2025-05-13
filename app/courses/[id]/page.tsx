@@ -14,11 +14,16 @@ type CourseDetailPageProps = {
 }
 
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
-  const courseId = params.id;
+  // Extract course ID from params
+  const { id: courseId } = params;
   const supabase = await createClient()
 
-  // Fetch course details
-  const { data: course } = await supabase.from("courses").select("*").eq("id", courseId).single()
+  // Fetch course details using courseId
+  const { data: course } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("id", courseId)
+    .single()
 
   if (!course || !course.is_published) {
     notFound()
