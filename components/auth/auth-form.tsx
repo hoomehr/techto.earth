@@ -94,22 +94,39 @@ export default function AuthForm() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      // Make sure to include the redirect URL and scopes for proper OAuth flow
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       })
 
       if (error) {
         setError(error.message)
+        setGoogleLoading(false)
       }
+      // Don't set googleLoading to false here as we're redirecting to Google
     } catch (error) {
       setError("An unexpected error occurred with Google sign in")
-    } finally {
       setGoogleLoading(false)
     }
   }
+
+  // Check if there's an auth error in the URL (from redirect)
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const errorParam = url.searchParams.get('error');
+    const errorDescription = url.searchParams.get('error_description');
+    
+    if (errorParam && errorDescription) {
+      setError(`${errorParam}: ${decodeURIComponent(errorDescription)}`);
+    }
+  }, []);
 
   return (
     <Card className="w-full max-w-md mx-auto">

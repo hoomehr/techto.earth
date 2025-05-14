@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { Loader2 } from "lucide-react"
+import { Loader2, Link as LinkIcon } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function CreateCoursePage() {
@@ -25,6 +25,7 @@ export default function CreateCoursePage() {
   const [description, setDescription] = useState("")
   const [content, setContent] = useState("")
   const [imageUrl, setImageUrl] = useState("")
+  const [materialsUrl, setMaterialsUrl] = useState("")
   const [category, setCategory] = useState("")
   const [level, setLevel] = useState("")
   const [duration, setDuration] = useState("")
@@ -50,6 +51,7 @@ export default function CreateCoursePage() {
         description,
         content,
         image_url: imageUrl,
+        materials_url: materialsUrl,
         category,
         level,
         duration,
@@ -121,6 +123,23 @@ export default function CreateCoursePage() {
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://example.com/image.jpg"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="materialsUrl">
+                <div className="flex items-center gap-1">
+                  <LinkIcon className="h-4 w-4" /> 
+                  Materials URL
+                </div>
+              </Label>
+              <Input
+                id="materialsUrl"
+                value={materialsUrl}
+                onChange={(e) => setMaterialsUrl(e.target.value)}
+                placeholder="https://example.com/course-materials"
+                type="url"
+              />
+              <p className="text-sm text-gray-500">Link to access online course materials (videos, slides, downloads, etc.)</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

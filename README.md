@@ -1,9 +1,32 @@
-# Techto Earth Concept
+# TechTo.Earth Platform
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+TechTo.Earth is a platform helping tech professionals transition to earth-based careers like agriculture, restaurant management, and artisanal crafts.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/hoomehrs-projects/v0-techto-earth-concept)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/5cl6CnRJ2T1)
+## Database Schema Updates
+
+### Adding the materials_url Field to Courses
+
+To add the `materials_url` field to the courses table, run:
+
+```bash
+node scripts/add-materials-url-field.js
+```
+
+You will be prompted to enter your Supabase URL and service role key. This script will add a new column to store URLs for accessing online course materials.
+
+## Development
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Overview
 

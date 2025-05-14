@@ -13,15 +13,10 @@ export default async function AllCoursesPage({ searchParams }: AllCoursesPagePro
   const supabase = await createClient()
   
   // Get filters from search params safely
-  const categoryParam = searchParams.category;
-  const levelParam = searchParams.level;
-  const priceParam = searchParams.price;
-  const searchParam = searchParams.search;
-  
-  const categoryFilter = typeof categoryParam === 'string' ? categoryParam : '';
-  const levelFilter = typeof levelParam === 'string' ? levelParam : '';
-  const priceFilter = typeof priceParam === 'string' ? priceParam : '';
-  const searchQuery = typeof searchParam === 'string' ? searchParam : '';
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : '';
+  const levelFilter = typeof searchParams.level === 'string' ? searchParams.level : '';
+  const priceFilter = typeof searchParams.price === 'string' ? searchParams.price : '';
+  const searchQuery = typeof searchParams.search === 'string' ? searchParams.search : '';
 
   // Fetch published courses
   let query = supabase

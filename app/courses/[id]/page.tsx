@@ -2,10 +2,11 @@ import { createClient } from "@/utils/supabase/server"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
-import { Clock, Users, BookOpen, Star, ArrowLeft } from "lucide-react"
+import { Clock, Users, BookOpen, Star, ArrowLeft, ExternalLink } from "lucide-react"
 import EnrollButton from "@/components/courses/enroll-button"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
+import { Button } from "@/components/ui/button"
 
 type CourseDetailPageProps = {
   params: {
@@ -14,8 +15,9 @@ type CourseDetailPageProps = {
 }
 
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
-  // Extract course ID from params
-  const { id: courseId } = params;
+  // Extract course ID from params safely with type checking
+  const courseId = params.id;
+  
   const supabase = await createClient()
 
   // Fetch course details using courseId
@@ -94,6 +96,24 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
                 <div className="whitespace-pre-wrap text-gray-700">{course.content}</div>
               </>
             )}
+            
+            {course.materials_url && (
+              <div className="mt-8 p-4 bg-green-50 rounded-lg border border-green-100">
+                <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                  <ExternalLink className="h-5 w-5 text-green-600" />
+                  Online Course Materials
+                </h2>
+                <p className="text-gray-700 mb-4">
+                  Access all course materials including videos, slides, and resources through the link below:
+                </p>
+                <Button asChild className="bg-green-600 hover:bg-green-700 mt-2">
+                  <a href={course.materials_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                    Access Course Materials
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -117,6 +137,22 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
                   <span className="font-medium">Category</span>
                   <span>{categoryMap[course.category] || course.category}</span>
                 </div>
+                
+                {course.materials_url && (
+                  <div className="pt-4">
+                    <Button variant="outline" asChild className="w-full justify-between">
+                      <a 
+                        href={course.materials_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-green-700 hover:text-green-800"
+                      >
+                        Access Materials
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

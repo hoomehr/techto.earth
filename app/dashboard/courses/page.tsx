@@ -12,6 +12,7 @@ type CourseType = {
   title: string;
   description: string;
   image_url: string;
+  materials_url?: string;
   duration: string;
   level: string;
   category: string;
