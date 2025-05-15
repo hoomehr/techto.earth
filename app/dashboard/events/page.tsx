@@ -4,8 +4,28 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, ChevronRight, Clock } from "lucide-react"
+import { Calendar, MapPin, ChevronRight, Clock, Plus } from "lucide-react"
 import { formatDate } from "@/lib/utils"
+
+type EventType = {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+  image_url: string;
+  category: string;
+}
+
+type EventRegistrationType = {
+  id: string;
+  user_id: string;
+  event_id: string;
+  status: string;
+  registered_at: string;
+  event: EventType;
+}
 
 export default async function DashboardEventsPage() {
   const supabase = await createClient()
@@ -15,7 +35,7 @@ export default async function DashboardEventsPage() {
   } = await supabase.auth.getUser()
 
   // Fetch user's registered events with proper join
-  const { data: registeredEvents, error: registrationError } = await supabase
+  const { data: rawRegisteredEvents, error: registrationError } = await supabase
     .from("event_registrations")
     .select(`
       id, 
@@ -23,21 +43,33 @@ export default async function DashboardEventsPage() {
       event_id, 
       status, 
       registered_at,
-      event:event_id (
-        id, 
-        title, 
-        description, 
-        location,
-        start_date,
-        end_date,
-        image_url,
-        category
-      )
+      event:events(*)
     `)
     .eq("user_id", user?.id)
     .order("registered_at", { ascending: false })
 
-  console.log("Event registrations query result:", { registeredEvents, registrationError })
+  console.log("Raw events data:", JSON.stringify(rawRegisteredEvents?.slice(0, 1), null, 2))
+
+  // Process data to handle the event property correctly
+  const registeredEvents = rawRegisteredEvents?.map(registration => {
+    let event = null;
+    
+    // Handle different ways Supabase might return the joined data
+    if (Array.isArray(registration.event)) {
+      // If it's an array (common with joins), take the first item
+      event = registration.event.length > 0 ? registration.event[0] : null;
+    } else if (typeof registration.event === 'object' && registration.event !== null) {
+      // If it's already an object, use it directly
+      event = registration.event;
+    }
+    
+    return {
+      ...registration,
+      event
+    };
+  }) || [];
+
+  console.log("Processed events:", registeredEvents.slice(0, 1).map(r => ({id: r.id, eventId: r.event_id, event: r.event ? {id: r.event.id, title: r.event.title} : null})))
 
   // Fetch upcoming events for discovery
   const { data: upcomingEvents } = await supabase
@@ -52,6 +84,15 @@ export default async function DashboardEventsPage() {
     <div>
       <h1 className="text-3xl font-bold mb-6">My Events</h1>
 
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Manage Your Events</h2>
+        <Button className="bg-yellow-500 hover:bg-yellow-600" asChild>
+          <Link href="/dashboard/events/create">
+            <Plus className="mr-2 h-4 w-4" /> Create New Event
+          </Link>
+        </Button>
+      </div>
+
       <Tabs defaultValue="registered" className="mb-8">
         <TabsList className="mb-4">
           <TabsTrigger value="registered">Registered Events</TabsTrigger>
@@ -59,11 +100,21 @@ export default async function DashboardEventsPage() {
         </TabsList>
 
         <TabsContent value="registered">
+          {registrationError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md mb-4">
+              <p>Error loading events: {registrationError.message}</p>
+            </div>
+          )}
+
           {registeredEvents && registeredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {registeredEvents.map((registration) => {
-                const event = registration.event
-                if (!event) return null
+                const event = registration.event;
+                
+                if (!event) {
+                  console.log(`Event not found for registration ${registration.id}, event_id: ${registration.event_id}`);
+                  return null;
+                }
                 
                 const isPastEvent = new Date(event.end_date) < new Date()
                 
@@ -73,8 +124,8 @@ export default async function DashboardEventsPage() {
                       <Calendar className="h-12 w-12 text-white/50" />
                     </div>
                     <CardHeader>
-                      <CardTitle>{event.title}</CardTitle>
-                      <CardDescription>{event.description?.substring(0, 100)}</CardDescription>
+                      <CardTitle>{event.title || 'Untitled Event'}</CardTitle>
+                      <CardDescription>{event.description?.substring(0, 100) || 'No description available'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 mb-4">
@@ -84,7 +135,7 @@ export default async function DashboardEventsPage() {
                         </div>
                         <div className="flex items-center">
                           <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                          <span className="text-sm text-gray-500">{event.location}</span>
+                          <span className="text-sm text-gray-500">{event.location || 'Location not specified'}</span>
                         </div>
                       </div>
                       {isPastEvent ? (
@@ -123,8 +174,8 @@ export default async function DashboardEventsPage() {
                       <Calendar className="h-12 w-12 text-white/50" />
                     </div>
                     <CardHeader>
-                      <CardTitle>{event.title}</CardTitle>
-                      <CardDescription>{event.description?.substring(0, 100)}</CardDescription>
+                      <CardTitle>{event.title || 'Untitled Event'}</CardTitle>
+                      <CardDescription>{event.description?.substring(0, 100) || 'No description available'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 mb-4">
@@ -134,7 +185,7 @@ export default async function DashboardEventsPage() {
                         </div>
                         <div className="flex items-center">
                           <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                          <span className="text-sm text-gray-500">{event.location}</span>
+                          <span className="text-sm text-gray-500">{event.location || 'Location not specified'}</span>
                         </div>
                       </div>
                       <Button variant="outline" className="w-full" asChild>

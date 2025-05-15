@@ -47,35 +47,33 @@ export default async function DashboardCoursesPage() {
       status, 
       progress, 
       enrolled_at,
-      course:courses(
-        id, 
-        title, 
-        description,
-        image_url, 
-        duration, 
-        level,
-        category,
-        price,
-        is_published
-      )
+      course:courses(*)
     `)
     .eq("user_id", user?.id)
     .order("enrolled_at", { ascending: false })
 
-  console.log("Enrolled courses query result:", { enrolledCourses: rawEnrolledCourses, enrollmentError })
+  console.log("Raw enrolled courses:", JSON.stringify(rawEnrolledCourses?.slice(0, 1), null, 2))
 
   // Process data to handle the course property correctly
   const enrolledCourses = rawEnrolledCourses?.map(enrollment => {
-    // Supabase returns the joined courses as an array, but we need it as an object
-    // We know there is only one course per enrollment, so we take the first item
-    const courseArray = enrollment.course as unknown as CourseType[];
-    const course = courseArray && courseArray.length > 0 ? courseArray[0] : null;
+    let course = null;
+    
+    // Handle different ways Supabase might return the joined data
+    if (Array.isArray(enrollment.course)) {
+      // If it's an array (common with joins), take the first item
+      course = enrollment.course.length > 0 ? enrollment.course[0] : null;
+    } else if (typeof enrollment.course === 'object' && enrollment.course !== null) {
+      // If it's already an object, use it directly
+      course = enrollment.course;
+    }
     
     return {
       ...enrollment,
       course
-    } as CourseEnrollmentType;
+    };
   }) || [];
+
+  console.log("Processed courses:", enrolledCourses.slice(0, 1).map(e => ({id: e.id, courseId: e.course_id, course: e.course ? {id: e.course.id, title: e.course.title} : null})))
 
   // Fetch public courses for discovery
   const { data: publicCoursesRaw } = await supabase
@@ -91,6 +89,13 @@ export default async function DashboardCoursesPage() {
     <div>
       <h1 className="text-3xl font-bold mb-6">My Courses</h1>
 
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Manage Your Learning</h2>
+        <Button className="bg-green-600 hover:bg-green-700" asChild>
+          <Link href="/dashboard/courses/create">Create New Course</Link>
+        </Button>
+      </div>
+
       <Tabs defaultValue="enrolled" className="mb-8">
         <TabsList className="mb-4">
           <TabsTrigger value="enrolled">Enrolled Courses</TabsTrigger>
@@ -98,11 +103,21 @@ export default async function DashboardCoursesPage() {
         </TabsList>
 
         <TabsContent value="enrolled">
+          {enrollmentError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md mb-4">
+              <p>Error loading courses: {enrollmentError.message}</p>
+            </div>
+          )}
+
           {enrolledCourses && enrolledCourses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {enrolledCourses.map((enrollment) => {
-                const course = enrollment.course
-                if (!course) return null
+                const course = enrollment.course;
+                
+                if (!course) {
+                  console.log(`Course not found for enrollment ${enrollment.id}, course_id: ${enrollment.course_id}`);
+                  return null;
+                }
                 
                 return (
                   <Card key={enrollment.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
@@ -110,14 +125,14 @@ export default async function DashboardCoursesPage() {
                       <BookOpen className="h-16 w-16 text-white/50" />
                     </div>
                     <CardHeader>
-                      <CardTitle>{course.title}</CardTitle>
-                      <CardDescription>{course.description?.substring(0, 100)}</CardDescription>
+                      <CardTitle>{course.title || 'Untitled Course'}</CardTitle>
+                      <CardDescription>{course.description?.substring(0, 100) || 'No description available'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-1 text-gray-500" />
-                          <span className="text-sm text-gray-500">{course.duration}</span>
+                          <span className="text-sm text-gray-500">{course.duration || 'N/A'}</span>
                         </div>
                         <Badge className="bg-green-100 text-green-800">
                           {enrollment.progress || 0}% Complete
@@ -153,8 +168,8 @@ export default async function DashboardCoursesPage() {
                       <BookOpen className="h-12 w-12 text-white/50" />
                     </div>
                     <CardHeader>
-                      <CardTitle>{course.title}</CardTitle>
-                      <CardDescription>{course.description?.substring(0, 100)}</CardDescription>
+                      <CardTitle>{course.title || 'Untitled Course'}</CardTitle>
+                      <CardDescription>{course.description?.substring(0, 100) || 'No description available'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Button variant="outline" className="w-full" asChild>

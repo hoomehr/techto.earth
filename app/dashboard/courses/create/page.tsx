@@ -46,26 +46,50 @@ export default function CreateCoursePage() {
     setError(null)
 
     try {
-      const { error } = await supabase.from("courses").insert({
-        title,
-        description,
-        content,
-        image_url: imageUrl,
-        materials_url: materialsUrl,
-        category,
-        level,
-        duration,
-        price: Number.parseFloat(price),
-        created_by: user.id,
-        is_published: isPublished,
-      })
+      // Insert the course and get the course ID
+      const { data: newCourse, error: courseError } = await supabase
+        .from("courses")
+        .insert({
+          title,
+          description,
+          content,
+          image_url: imageUrl,
+          materials_url: materialsUrl,
+          category,
+          level,
+          duration,
+          price: Number.parseFloat(price),
+          created_by: user.id,
+          is_published: isPublished,
+        })
+        .select()
+        .single()
 
-      if (error) {
-        setError(error.message)
-      } else {
-        router.push("/dashboard/courses")
-        router.refresh()
+      if (courseError) {
+        setError(courseError.message)
+        return
       }
+
+      // Automatically enroll the creator in their own course
+      if (newCourse) {
+        const { error: enrollmentError } = await supabase
+          .from("course_enrollments")
+          .insert({
+            user_id: user.id,
+            course_id: newCourse.id,
+            status: 'active',
+            progress: 0,
+          })
+
+        if (enrollmentError) {
+          console.error("Failed to enroll creator in course:", enrollmentError)
+          // We don't return here because the course was created successfully
+          // The user can still manually enroll later
+        }
+      }
+
+      router.push("/dashboard/courses")
+      router.refresh()
     } catch (error) {
       setError("An unexpected error occurred")
     } finally {
@@ -154,6 +178,8 @@ export default function CreateCoursePage() {
                     <SelectItem value="restaurant">Restaurant & Food Service</SelectItem>
                     <SelectItem value="crafts">Craftsmanship & Trades</SelectItem>
                     <SelectItem value="business">Business & Entrepreneurship</SelectItem>
+                    <SelectItem value="education">Education & Community</SelectItem>
+                    <SelectItem value="sustainability">Sustainability & Conservation</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

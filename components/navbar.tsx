@@ -3,8 +3,9 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Leaf, Menu, X } from "lucide-react"
+import { Leaf, Menu, X, Shield } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
+import { useAdmin } from "@/context/admin-context"
 import { useState } from "react"
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, loading, signOut } = useAuth()
+  const { isAdmin, loading: adminLoading } = useAdmin()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isActive = (path: string) => {
@@ -110,6 +112,11 @@ export default function Navbar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.push("/dashboard")}>Dashboard</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>Profile</DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => router.push("/admin")}>
+                    <Shield className="mr-2 h-4 w-4" /> Admin Panel
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
@@ -153,12 +160,13 @@ export default function Navbar() {
               </Link>
             </nav>
 
-            <div className="flex flex-col space-y-2">
+            {/* Mobile auth buttons */}
+            <div className="border-t pt-4">
               {!loading && !user ? (
-                <>
+                <div className="flex flex-col space-y-2">
                   <Button
                     variant="outline"
-                    className="w-full border-green-600 text-green-700 hover:bg-green-50"
+                    className="w-full justify-center border-green-600 text-green-700 hover:bg-green-50"
                     onClick={() => {
                       router.push("/auth")
                       setMobileMenuOpen(false)
@@ -167,7 +175,7 @@ export default function Navbar() {
                     Sign In
                   </Button>
                   <Button
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+                    className="w-full justify-center bg-yellow-500 hover:bg-yellow-600 text-white"
                     onClick={() => {
                       router.push("/auth")
                       setMobileMenuOpen(false)
@@ -175,7 +183,7 @@ export default function Navbar() {
                   >
                     Join Now
                   </Button>
-                </>
+                </div>
               ) : (
                 <>
                   <div className="px-4 py-2 border-b">
@@ -202,6 +210,18 @@ export default function Navbar() {
                   >
                     Profile
                   </Button>
+                  {isAdmin && (
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        router.push("/admin")
+                        setMobileMenuOpen(false)
+                      }}
+                    >
+                      <Shield className="mr-2 h-4 w-4" /> Admin Panel
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     className="justify-start text-red-600 hover:text-red-700 hover:bg-red-50"

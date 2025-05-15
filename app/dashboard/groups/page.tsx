@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, Globe, MessageSquare, ChevronRight } from "lucide-react"
+import { Users, Globe, MessageSquare, ChevronRight, Plus } from "lucide-react"
 
 // Define types for our data
 type GroupType = {
@@ -35,7 +35,7 @@ export default async function DashboardGroupsPage() {
   } = await supabase.auth.getUser()
 
   // Fetch user's group memberships with proper join
-  const { data: membershipGroups, error: membershipError } = await supabase
+  const { data: rawMembershipGroups, error: membershipError } = await supabase
     .from("group_memberships")
     .select(`
       id, 
@@ -43,21 +43,33 @@ export default async function DashboardGroupsPage() {
       group_id, 
       role, 
       joined_at,
-      group:groups(
-        id, 
-        name, 
-        description, 
-        image_url, 
-        location, 
-        category,
-        is_private,
-        created_at
-      )
+      group:groups(*)
     `)
     .eq("user_id", user?.id)
     .order("joined_at", { ascending: false })
 
-  console.log("Group memberships query result:", { membershipGroups, membershipError })
+  console.log("Raw group memberships:", JSON.stringify(rawMembershipGroups?.slice(0, 1), null, 2))
+
+  // Process data to handle the group property correctly
+  const membershipGroups = rawMembershipGroups?.map(membership => {
+    let group = null;
+    
+    // Handle different ways Supabase might return the joined data
+    if (Array.isArray(membership.group)) {
+      // If it's an array (common with joins), take the first item
+      group = membership.group.length > 0 ? membership.group[0] : null;
+    } else if (typeof membership.group === 'object' && membership.group !== null) {
+      // If it's already an object, use it directly
+      group = membership.group;
+    }
+    
+    return {
+      ...membership,
+      group
+    };
+  }) || [];
+
+  console.log("Processed groups:", membershipGroups.slice(0, 1).map(m => ({id: m.id, groupId: m.group_id, group: m.group ? {id: m.group.id, name: m.group.name} : null})))
 
   // Fetch popular groups for discovery
   const { data: popularGroups } = await supabase
@@ -88,6 +100,15 @@ export default async function DashboardGroupsPage() {
     <div>
       <h1 className="text-3xl font-bold mb-6">My Groups</h1>
 
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Manage Your Communities</h2>
+        <Button className="bg-green-600 hover:bg-green-700" asChild>
+          <Link href="/dashboard/groups/create">
+            <Plus className="mr-2 h-4 w-4" /> Create New Group
+          </Link>
+        </Button>
+      </div>
+
       <Tabs defaultValue="joined" className="mb-8">
         <TabsList className="mb-4">
           <TabsTrigger value="joined">Joined Groups</TabsTrigger>
@@ -95,11 +116,21 @@ export default async function DashboardGroupsPage() {
         </TabsList>
 
         <TabsContent value="joined">
+          {membershipError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md mb-4">
+              <p>Error loading groups: {membershipError.message}</p>
+            </div>
+          )}
+
           {membershipGroups && membershipGroups.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {membershipGroups.map((membership: GroupMembershipType) => {
-                const group = membership.group
-                if (!group) return null
+              {membershipGroups.map((membership) => {
+                const group = membership.group;
+                
+                if (!group) {
+                  console.log(`Group not found for membership ${membership.id}, group_id: ${membership.group_id}`);
+                  return null;
+                }
                 
                 return (
                   <Card key={membership.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
@@ -107,14 +138,14 @@ export default async function DashboardGroupsPage() {
                       <Users className="h-12 w-12 text-white/50" />
                     </div>
                     <CardHeader>
-                      <CardTitle>{group.name}</CardTitle>
-                      <CardDescription>{group.description?.substring(0, 100)}</CardDescription>
+                      <CardTitle>{group.name || 'Untitled Group'}</CardTitle>
+                      <CardDescription>{group.description?.substring(0, 100) || 'No description available'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 mb-4">
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-2 text-gray-500" />
-                          <span className="text-sm text-gray-500">Members</span>
+                          <span className="text-sm text-gray-500">{membership.role || 'Member'}</span>
                         </div>
                         {group.is_private && (
                           <Badge className="bg-gray-100 text-gray-800">
@@ -146,14 +177,14 @@ export default async function DashboardGroupsPage() {
           {popularGroups && popularGroups.length > 0 ? (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {popularGroups.map((group: GroupType) => (
+                {popularGroups.map((group) => (
                   <Card key={group.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-green-200/40">
                     <div className="h-32 bg-gradient-to-r from-green-500 to-green-700 relative flex items-center justify-center">
                       <Globe className="h-12 w-12 text-white/50" />
                     </div>
                     <CardHeader>
-                      <CardTitle>{group.name}</CardTitle>
-                      <CardDescription>{group.description?.substring(0, 100)}</CardDescription>
+                      <CardTitle>{group.name || 'Untitled Group'}</CardTitle>
+                      <CardDescription>{group.description?.substring(0, 100) || 'No description available'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 mb-4">
