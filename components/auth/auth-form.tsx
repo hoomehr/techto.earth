@@ -92,13 +92,19 @@ export default function AuthForm() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true)
     setError(null)
+    console.log('Starting Google sign in process')
 
     try {
+      // Get the origin for the redirect URL
+      const origin = window.location.origin
+      const redirectUrl = `${origin}/api/auth/callback`
+      console.log('Using redirect URL:', redirectUrl)
+
       // Make sure to include the redirect URL and scopes for proper OAuth flow
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/api/auth/callback`,
+          redirectTo: redirectUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -107,11 +113,17 @@ export default function AuthForm() {
       })
 
       if (error) {
+        console.error('Google OAuth error:', error)
         setError(error.message)
         setGoogleLoading(false)
+        return
       }
-      // Don't set googleLoading to false here as we're redirecting to Google
+
+      console.log('Google sign in initiated successfully, redirecting...')
+      // If you need to debug, uncomment this to see the data
+      // console.log('Auth data:', data)
     } catch (error) {
+      console.error('Unexpected error during Google sign in:', error)
       setError("An unexpected error occurred with Google sign in")
       setGoogleLoading(false)
     }

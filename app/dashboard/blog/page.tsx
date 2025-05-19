@@ -40,71 +40,71 @@ export default async function DashboardBlogPage() {
         </TabsList>
 
         <TabsContent value="my-posts">
-          {posts && posts.length > 0 ? (
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {posts.map((post) => (
-                    <TableRow key={post.id}>
-                      <TableCell className="font-medium">{post.title}</TableCell>
-                      <TableCell>
-                        {post.published ? (
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Published</Badge>
-                        ) : (
-                          <Badge variant="outline">Draft</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(post.created_at).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="icon" asChild>
-                            <Link href={`/dashboard/blog/edit/${post.id}`}>
-                              <Edit className="h-4 w-4" />
-                              <span className="sr-only">Edit</span>
-                            </Link>
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700" asChild>
-                            <Link href={`/dashboard/blog/delete/${post.id}`}>
-                              <Trash className="h-4 w-4" />
-                              <span className="sr-only">Delete</span>
-                            </Link>
-                          </Button>
-                          {post.published && (
-                            <Button variant="ghost" size="sm" asChild>
-                              <Link href={`/blog/${post.slug}`} target="_blank">
-                                View
-                              </Link>
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
-              <p className="text-gray-500 mb-4">You haven't created any blog posts yet.</p>
-              <Button className="bg-green-600 hover:bg-green-700" asChild>
+      {posts && posts.length > 0 ? (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {posts.map((post) => (
+                <TableRow key={post.id}>
+                  <TableCell className="font-medium">{post.title}</TableCell>
+                  <TableCell>
+                    {post.published ? (
+                      <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Published</Badge>
+                    ) : (
+                      <Badge variant="outline">Draft</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(post.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/dashboard/blog/edit/${post.id}`}>
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit</span>
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700" asChild>
+                        <Link href={`/dashboard/blog/delete/${post.id}`}>
+                          <Trash className="h-4 w-4" />
+                          <span className="sr-only">Delete</span>
+                        </Link>
+                      </Button>
+                      {post.published && (
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link href={`/blog/${post.slug}`} target="_blank">
+                            View
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <p className="text-gray-500 mb-4">You haven't created any blog posts yet.</p>
+          <Button className="bg-green-600 hover:bg-green-700" asChild>
                 <Link href="/blog">Browse Blog</Link>
-              </Button>
-            </div>
-          )}
+          </Button>
+        </div>
+      )}
         </TabsContent>
 
         <TabsContent value="recent">

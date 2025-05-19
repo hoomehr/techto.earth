@@ -24,7 +24,7 @@ export default function CourseCard({ course }: CourseCardProps) {
 
   const handleViewDetails = (e: React.MouseEvent) => {
     e.preventDefault()
-    router.push(`/courses/${course.id}`)
+        router.push(`/courses/${course.id}`)
   }
 
   // Format category for display
@@ -127,9 +127,9 @@ export default function CourseCard({ course }: CourseCardProps) {
             <div className="ml-auto flex gap-2">
               <div className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
                 {categoryMap[course.category] || course.category}
-              </div>
+          </div>
               <div className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">
-                {levelMap[course.level] || course.level}
+              {levelMap[course.level] || course.level}
               </div>
             </div>
           </div>

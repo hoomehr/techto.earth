@@ -8,17 +8,36 @@ export async function createClient() {
     {
       cookies: {
         async get(name: string) {
-          const cookieStore = await cookies()
-          const cookie = cookieStore.get(name)
-          return cookie?.value
+          try {
+            // In Next.js 14+, cookies() is synchronous 
+            const cookieStore = cookies()
+            const cookie = cookieStore.get(name)
+            return cookie?.value
+          } catch (error) {
+            console.error(`Error retrieving cookie ${name}:`, error)
+            return undefined
+          }
         },
         async set(name: string, value: string, options: any) {
-          const cookieStore = await cookies()
-          cookieStore.set({ name, value, ...options })
+          try {
+            // Ensure value is valid before setting
+            if (typeof value === 'string') {
+              const cookieStore = cookies()
+              cookieStore.set({ name, value, ...options })
+            } else {
+              console.warn(`Invalid cookie value for ${name}, not setting cookie`)
+            }
+          } catch (error) {
+            console.error(`Error setting cookie ${name}:`, error)
+          }
         },
         async remove(name: string, options: any) {
-          const cookieStore = await cookies()
-          cookieStore.delete({ name, ...options })
+          try {
+            const cookieStore = cookies()
+            cookieStore.delete({ name, ...options })
+          } catch (error) {
+            console.error(`Error removing cookie ${name}:`, error)
+          }
         },
       },
     }
