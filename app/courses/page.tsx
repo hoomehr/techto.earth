@@ -7,17 +7,20 @@ import CourseCard from "@/components/courses/course-card"
 
 // Define props type for the page
 type CoursesPageProps = {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 };
 
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const supabase = await createClient()
   
+  // Await searchParams to fix Next.js 15 warning
+  const params = await searchParams
+  
   // Get filters from search params safely
-  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : '';
-  const levelFilter = typeof searchParams.level === 'string' ? searchParams.level : '';
-  const priceFilter = typeof searchParams.price === 'string' ? searchParams.price : '';
-  const searchQuery = typeof searchParams.search === 'string' ? searchParams.search : '';
+  const categoryFilter = typeof params.category === 'string' ? params.category : '';
+  const levelFilter = typeof params.level === 'string' ? params.level : '';
+  const priceFilter = typeof params.price === 'string' ? params.price : '';
+  const searchQuery = typeof params.search === 'string' ? params.search : '';
 
   // Fetch published courses
   let query = supabase

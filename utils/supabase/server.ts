@@ -9,8 +9,8 @@ export async function createClient() {
       cookies: {
         async get(name: string) {
           try {
-            // In Next.js 14+, cookies() is synchronous 
-            const cookieStore = cookies()
+            // In Next.js 15+, cookies() is async
+            const cookieStore = await cookies()
             const cookie = cookieStore.get(name)
             return cookie?.value
           } catch (error) {
@@ -22,7 +22,7 @@ export async function createClient() {
           try {
             // Ensure value is valid before setting
             if (typeof value === 'string') {
-              const cookieStore = cookies()
+              const cookieStore = await cookies()
               cookieStore.set({ name, value, ...options })
             } else {
               console.warn(`Invalid cookie value for ${name}, not setting cookie`)
@@ -33,7 +33,7 @@ export async function createClient() {
         },
         async remove(name: string, options: any) {
           try {
-            const cookieStore = cookies()
+            const cookieStore = await cookies()
             cookieStore.delete({ name, ...options })
           } catch (error) {
             console.error(`Error removing cookie ${name}:`, error)
