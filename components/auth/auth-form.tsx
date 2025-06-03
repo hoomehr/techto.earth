@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle, CheckCircle } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 
 export default function AuthForm() {
@@ -22,44 +22,102 @@ export default function AuthForm() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("signin")
   const router = useRouter()
   const supabase = createClient()
+
+  const clearMessages = () => {
+    setError(null)
+    setMessage(null)
+  }
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    clearMessages()
+
+    console.log('🔄 Starting signup process...')
+    console.log('📧 Email:', email)
+    console.log('👤 Full name:', fullName)
 
     try {
-      const { error } = await supabase.auth.signUp({
+      // Validate inputs
+      if (!email || !password || !fullName) {
+        setError("Please fill in all required fields")
+        setLoading(false)
+        return
+      }
+
+      if (password.length < 6) {
+        setError("Password must be at least 6 characters long")
+        setLoading(false)
+        return
+      }
+
+      // Create user with metadata as per Supabase documentation
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName,
+            display_name: fullName,
+            signup_method: 'email',
+            profile_completed: false
           },
           emailRedirectTo: `${window.location.origin}/api/auth/callback`,
         },
       })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        // Auto sign in after registration
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
+      console.log('📊 Signup response:', { 
+        user: data.user ? 'Created' : 'None', 
+        session: data.session ? 'Active' : 'None',
+        error: error?.message 
+      })
 
-        if (signInError) {
-          setError(signInError.message)
+      if (error) {
+        console.error('❌ Signup error:', error)
+        
+        // Handle specific Supabase error cases
+        if (error.message.includes('User already registered')) {
+          setError("An account with this email already exists. Please sign in instead.")
+          setActiveTab("signin")
+        } else if (error.message.includes('Invalid email')) {
+          setError("Please enter a valid email address")
+        } else if (error.message.includes('Password')) {
+          setError("Password must be at least 6 characters long")
         } else {
-          router.push("/dashboard")
-          router.refresh()
+          setError(error.message)
         }
+        return
       }
-    } catch (error) {
-      setError("An unexpected error occurred")
+
+      if (data.user) {
+        console.log('✅ User created successfully:', data.user.id)
+        
+        // According to Supabase docs: if email confirmation is enabled, session will be null
+        if (!data.session) {
+          console.log('📧 Email confirmation required')
+          setMessage(
+            `A confirmation email has been sent to ${email}. ` +
+            "Please check your email and click the confirmation link to complete your registration."
+          )
+          
+          // Clear form
+          setEmail("")
+          setPassword("")
+          setFullName("")
+          return
+        }
+
+        console.log('🚀 User logged in immediately, redirecting to profile completion...')
+        // If session exists (email confirmation disabled), redirect immediately
+        router.push("/dashboard/profile/complete")
+        router.refresh()
+      }
+    } catch (error: any) {
+      console.error('💥 Unexpected signup error:', error)
+      setError(error?.message || "An unexpected error occurred during signup")
     } finally {
       setLoading(false)
     }
@@ -68,22 +126,64 @@ export default function AuthForm() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    clearMessages()
+
+    console.log('🔄 Starting signin process...')
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Validate inputs
+      if (!email || !password) {
+        setError("Please fill in all required fields")
+        setLoading(false)
+        return
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
+      console.log('📊 Signin response:', { 
+        user: data.user ? 'Found' : 'None', 
+        session: data.session ? 'Active' : 'None',
+        error: error?.message 
+      })
+
       if (error) {
-        setError(error.message)
-      } else {
-        router.push("/dashboard")
+        console.error('❌ Signin error:', error)
+        
+        // Handle specific Supabase error cases
+        if (error.message.includes('Invalid login credentials')) {
+          setError("Invalid email or password. Please check your credentials and try again.")
+        } else if (error.message.includes('Email not confirmed')) {
+          setError("Please confirm your email address before signing in. Check your inbox for a confirmation link.")
+        } else if (error.message.includes('Too many requests')) {
+          setError("Too many sign-in attempts. Please wait a moment and try again.")
+        } else {
+          setError(error.message)
+        }
+        return
+      }
+
+      if (data.user && data.session) {
+        console.log('✅ User signed in successfully:', data.user.id)
+        
+        // Check if user needs to complete profile based on user metadata
+        const needsProfileCompletion = !data.user.user_metadata?.profile_completed
+        
+        console.log('🔍 Profile completion needed:', needsProfileCompletion)
+        console.log('👤 User metadata:', data.user.user_metadata)
+        
+        if (needsProfileCompletion) {
+          router.push("/dashboard/profile/complete")
+        } else {
+          router.push("/dashboard")
+        }
         router.refresh()
       }
-    } catch (error) {
-      setError("An unexpected error occurred")
+    } catch (error: any) {
+      console.error('💥 Unexpected signin error:', error)
+      setError(error?.message || "An unexpected error occurred during sign in")
     } finally {
       setLoading(false)
     }
@@ -91,16 +191,14 @@ export default function AuthForm() {
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true)
-    setError(null)
-    console.log('Starting Google sign in process')
+    clearMessages()
+    console.log('🔄 Starting Google OAuth process')
 
     try {
-      // Get the origin for the redirect URL
       const origin = window.location.origin
       const redirectUrl = `${origin}/api/auth/callback`
-      console.log('Using redirect URL:', redirectUrl)
+      console.log('🔗 Using redirect URL:', redirectUrl)
 
-      // Make sure to include the redirect URL and scopes for proper OAuth flow
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -113,36 +211,46 @@ export default function AuthForm() {
       })
 
       if (error) {
-        console.error('Google OAuth error:', error)
-        setError(error.message)
+        console.error('❌ Google OAuth error:', error)
+        setError(`Google sign-in failed: ${error.message}`)
         setGoogleLoading(false)
         return
       }
 
-      console.log('Google sign in initiated successfully, redirecting...')
-      // If you need to debug, uncomment this to see the data
-      // console.log('Auth data:', data)
-    } catch (error) {
-      console.error('Unexpected error during Google sign in:', error)
-      setError("An unexpected error occurred with Google sign in")
+      console.log('✅ Google OAuth initiated, redirecting...')
+      // Don't set loading to false here as we're redirecting
+    } catch (error: any) {
+      console.error('💥 Unexpected error during Google sign in:', error)
+      setError(error?.message || "An unexpected error occurred with Google sign in")
       setGoogleLoading(false)
     }
   }
 
-  // Check if there's an auth error in the URL (from redirect)
+  // Check for auth errors in URL (from redirects)
   useEffect(() => {
-    const url = new URL(window.location.href);
-    const errorParam = url.searchParams.get('error');
-    const errorDescription = url.searchParams.get('error_description');
-    
-    if (errorParam && errorDescription) {
-      setError(`${errorParam}: ${decodeURIComponent(errorDescription)}`);
+    try {
+      const url = new URL(window.location.href)
+      const errorParam = url.searchParams.get('error')
+      const errorDescription = url.searchParams.get('error_description')
+      
+      if (errorParam) {
+        const decodedError = errorDescription ? 
+          `${errorParam}: ${decodeURIComponent(errorDescription)}` : 
+          errorParam
+        console.log('🔗 URL error detected:', decodedError)
+        setError(decodedError)
+        
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+    } catch (e) {
+      console.warn('⚠️ Error parsing URL params:', e)
     }
-  }, []);
+  }, [])
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <Tabs defaultValue="signin">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <CardHeader>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
@@ -152,12 +260,14 @@ export default function AuthForm() {
         <CardContent>
           {error && (
             <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           {message && (
             <Alert className="mb-4 bg-green-50 text-green-800 border-green-200">
+              <CheckCircle className="h-4 w-4" />
               <AlertDescription>{message}</AlertDescription>
             </Alert>
           )}
@@ -167,7 +277,7 @@ export default function AuthForm() {
             variant="outline" 
             className="w-full mb-4 flex items-center justify-center gap-2"
             onClick={handleGoogleSignIn}
-            disabled={googleLoading}
+            disabled={googleLoading || loading}
           >
             {googleLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -193,27 +303,36 @@ export default function AuthForm() {
           <TabsContent value="signin">
             <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="signin-email">Email</Label>
                 <Input
-                  id="email"
+                  id="signin-email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={loading || googleLoading}
+                  autoComplete="email"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="signin-password">Password</Label>
                 <Input
-                  id="password"
+                  id="signin-password"
                   type="password"
+                  placeholder="Your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading || googleLoading}
+                  autoComplete="current-password"
                 />
               </div>
-              <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-green-600 hover:bg-green-700" 
+                disabled={loading || googleLoading}
+              >
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Sign In
               </Button>
@@ -223,40 +342,52 @@ export default function AuthForm() {
           <TabsContent value="signup">
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="signup-fullName">Full Name *</Label>
                 <Input
-                  id="fullName"
+                  id="signup-fullName"
                   type="text"
                   placeholder="John Doe"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
+                  disabled={loading || googleLoading}
+                  autoComplete="name"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="emailSignup">Email</Label>
+                <Label htmlFor="signup-email">Email *</Label>
                 <Input
-                  id="emailSignup"
+                  id="signup-email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={loading || googleLoading}
+                  autoComplete="email"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="passwordSignup">Password</Label>
+                <Label htmlFor="signup-password">Password *</Label>
                 <Input
-                  id="passwordSignup"
+                  id="signup-password"
                   type="password"
+                  placeholder="Minimum 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={6}
+                  disabled={loading || googleLoading}
+                  autoComplete="new-password"
                 />
               </div>
-              <Button type="submit" className="w-full bg-yellow-500 hover:bg-yellow-600" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-yellow-500 hover:bg-yellow-600" 
+                disabled={loading || googleLoading}
+              >
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Sign Up
+                Create Account
               </Button>
             </form>
           </TabsContent>
