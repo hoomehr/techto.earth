@@ -52,8 +52,20 @@ export default function ProfileCompletePage() {
   const [step, setStep] = useState(1)
   const totalSteps = 3
 
-  // Check if user is from Google OAuth
-  const isGoogleUser = user?.app_metadata?.provider === 'google'
+  // Enhanced Google OAuth user detection
+  const providers = user?.app_metadata?.providers || []
+  const primaryProvider = user?.app_metadata?.provider
+  const hasGoogleMetadata = !!(
+    user?.user_metadata?.picture ||
+    user?.user_metadata?.provider_id ||
+    user?.user_metadata?.sub
+  )
+  
+  const isGoogleUser = 
+    providers.includes('google') || 
+    primaryProvider === 'google' ||
+    hasGoogleMetadata
+    
   const hasGoogleInfo = !!(user?.user_metadata?.name || user?.user_metadata?.picture)
 
   const [profile, setProfile] = useState({
@@ -77,6 +89,14 @@ export default function ProfileCompletePage() {
       hasName: !!(user.user_metadata?.name || user.user_metadata?.full_name),
       hasPicture: !!user.user_metadata?.picture,
       metadata: user.user_metadata
+    })
+
+    console.log('🔍 Enhanced provider detection:', {
+      providers,
+      primaryProvider,
+      hasGoogleMetadata,
+      isGoogleUser,
+      hasGoogleInfo
     })
 
     // If user already has a complete profile, redirect to dashboard
