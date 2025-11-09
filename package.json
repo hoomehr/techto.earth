@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",
