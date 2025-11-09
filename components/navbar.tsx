@@ -48,7 +48,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Leaf className="h-6 w-6 text-green-600" />
           <span className="text-xl font-bold text-green-800">
@@ -190,7 +190,7 @@ export default function Navbar() {
 
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t">
-          <div className="container py-4 space-y-4">
+          <div className="container mx-auto px-4 py-4 space-y-4">
             <nav className="flex flex-col space-y-2">
               <Link
                 href="/"

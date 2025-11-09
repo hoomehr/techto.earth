@@ -45,9 +45,9 @@ export default function Home() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Our Products</h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
               Intelligent solutions designed for earthic and ecologic use cases — bridging technology with nature,
@@ -55,17 +55,14 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* EarthBridge Product */}
-            <Card className="border-2 border-slate-200 overflow-hidden hover:border-green-500 transition-colors duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center group-hover:from-green-100 group-hover:to-emerald-100 transition-colors duration-300">
-                <div className="flex gap-4">
-                  <Sprout className="h-16 w-16 text-green-600" />
-                  <ArrowRight className="h-16 w-16 text-slate-400" />
+            <Card className="border border-slate-200 overflow-hidden hover:border-green-300 transition-all duration-300 group shadow-lg hover:shadow-green-200/50 hover:shadow-2xl">
+              <CardHeader className="pt-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <Sprout className="h-8 w-8 text-green-600" />
+                  <CardTitle className="text-2xl text-green-700">EarthBridge</CardTitle>
                 </div>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl text-green-700">EarthBridge</CardTitle>
                 <CardDescription className="text-base">Bridging Tech to Earth Careers</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -89,24 +86,21 @@ export default function Home() {
                 </ul>
               </CardContent>
               <div className="px-6 pb-6">
-                <Button asChild className="w-full bg-green-600 hover:bg-green-700">
+                <Button asChild size="sm" className="bg-green-600 hover:bg-green-700">
                   <Link href="/career-path">
-                    Explore EarthBridge <ArrowRight className="ml-2 h-4 w-4" />
+                    Explore EarthBridge <ArrowRight className="ml-2 h-3 w-3" />
                   </Link>
                 </Button>
               </div>
             </Card>
 
             {/* EcoLog Product */}
-            <Card className="border-2 border-slate-200 overflow-hidden hover:border-emerald-500 transition-colors duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center group-hover:from-emerald-100 group-hover:to-teal-100 transition-colors duration-300">
-                <div className="flex gap-4">
-                  <BarChart3 className="h-16 w-16 text-emerald-600" />
-                  <Zap className="h-16 w-16 text-slate-400" />
+            <Card className="border border-slate-200 overflow-hidden hover:border-emerald-300 transition-all duration-300 group shadow-lg hover:shadow-emerald-200/50 hover:shadow-2xl">
+              <CardHeader className="pt-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <BarChart3 className="h-8 w-8 text-emerald-600" />
+                  <CardTitle className="text-2xl text-emerald-700">EcoLog</CardTitle>
                 </div>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl text-emerald-700">EcoLog</CardTitle>
                 <CardDescription className="text-base">Smart Environment Management</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -130,9 +124,9 @@ export default function Home() {
                 </ul>
               </CardContent>
               <div className="px-6 pb-6">
-                <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700">
+                <Button asChild size="sm" className="bg-emerald-600 hover:bg-emerald-700">
                   <Link href="/ecolog">
-                    Explore EcoLog <ArrowRight className="ml-2 h-4 w-4" />
+                    Explore EcoLog <ArrowRight className="ml-2 h-3 w-3" />
                   </Link>
                 </Button>
               </div>
