@@ -10,33 +10,44 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-2">
               <Leaf className="h-5 w-5 text-green-600" />
               <span className="text-lg font-bold text-green-800">
-                TechTo<span className="text-yellow-600">.Earth</span>
+                Techto<span className="text-emerald-600">.Earth</span>
               </span>
             </Link>
             <p className="text-sm text-gray-600 mt-2">
-              Helping tech professionals transition to farming, agriculture, restaurants, and manual jobs.
+              Technology for earthic and ecologic use cases. Building intelligent tools for sustainable living and
+              environmental stewardship.
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-900">Navigation</h3>
+            <h3 className="text-sm font-medium text-gray-900">Products</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link href="/" className="text-sm text-gray-600 hover:text-green-700">
-                  Home
+                <Link href="/career-path" className="text-sm text-gray-600 hover:text-green-700">
+                  EarthBridge
                 </Link>
               </li>
               <li>
-                <Link href="/courses" className="text-sm text-gray-600 hover:text-green-700">
+                <Link href="/ecolog" className="text-sm text-gray-600 hover:text-green-700">
+                  EcoLog
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-900">EarthBridge</h3>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <Link href="/career-path/courses" className="text-sm text-gray-600 hover:text-green-700">
                   Courses
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="text-sm text-gray-600 hover:text-green-700">
+                <Link href="/career-path/events" className="text-sm text-gray-600 hover:text-green-700">
                   Events
                 </Link>
               </li>
               <li>
-                <Link href="/groups" className="text-sm text-gray-600 hover:text-green-700">
+                <Link href="/career-path/groups" className="text-sm text-gray-600 hover:text-green-700">
                   Groups
                 </Link>
               </li>
@@ -94,9 +105,10 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-8">
-          <p className="text-xs text-gray-500">&copy; {new Date().getFullYear()} TechTo.Earth. All rights reserved.</p>
+          <p className="text-xs text-gray-500">&copy; {new Date().getFullYear()} Techto.Earth. All rights reserved.</p>
         </div>
       </div>
     </footer>
   )
 }
+

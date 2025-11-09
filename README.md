@@ -1,6 +1,32 @@
-# TechTo.Earth Platform
+# Techto.Earth
 
-TechTo.Earth is a platform helping tech professionals transition to earth-based careers like agriculture, restaurant management, and artisanal crafts.
+**Technology for Earthic & Ecologic Use Cases**
+
+Techto.Earth is a mother company building intelligent tools and communities that bridge technology with sustainable living, personal transformation, and environmental stewardship.
+
+## Our Products
+
+### 🌱 EarthBridge
+**Bridging Tech to Earth Careers**
+
+A complete transition program helping tech professionals discover meaningful work in agriculture, farming, restaurants, and other fulfilling earth-based careers. Features include:
+- Expert-led courses and training
+- Networking events and farm tours  
+- Community support groups
+
+[Explore EarthBridge →](/career-path)
+
+### 🌍 EcoLog
+**Smart Environment Management**
+
+Your intelligent companion for managing healthy, high-performance environments. From growing and production spaces to natural and living systems, EcoLog brings everything together in one smart dashboard. Features include:
+- AI-powered environmental insights
+- Real-time monitoring dashboard
+- Automated alerts and recommendations
+- Activity logging with photo and note integration
+- Priority task management
+
+[Explore EcoLog →](/ecolog)
 
 ## Database Schema Updates
 

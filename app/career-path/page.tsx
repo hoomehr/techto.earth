@@ -16,11 +16,14 @@ export default function CareerPathHome() {
             <Sprout className="h-8 w-8 text-green-600" />
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-4">
-            From <span className="text-gray-700">Tech</span> to <span className="text-green-600">Earth</span>
+            <span className="text-green-600">EarthBridge</span>
           </h1>
+          <p className="text-xl md:text-2xl text-green-700 font-medium mb-4">
+            Bridging Tech to Earth Careers
+          </p>
           <p className="max-w-2xl text-lg md:text-xl text-gray-600 mb-8">
-            Helping tech professionals transition to farming, agriculture, restaurants, and other fulfilling manual
-            careers.
+            A complete transition program helping tech professionals discover meaningful work in agriculture, farming,
+            restaurants, and other fulfilling earth-based careers.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
@@ -201,8 +204,8 @@ export default function CareerPathHome() {
                   </div>
                   <div>
                     <p className="text-gray-600 italic mb-4">
-                      "After 12 years as a software engineer, I now run a small organic farm. CareerPath's courses gave
-                      me the confidence to make the leap."
+                      "After 12 years as a software engineer, I now run a small organic farm. EarthBridge's courses and
+                      community gave me the confidence to make the leap."
                     </p>
                     <p className="font-medium">Michael K.</p>
                     <p className="text-sm text-gray-500">Former Software Engineer, now Organic Farmer</p>

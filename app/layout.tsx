@@ -10,8 +10,8 @@ import { AuthProvider } from "@/context/auth-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "TechTo.Earth - From Tech to Agriculture",
-  description: "Helping tech professionals transition to farming, agriculture, restaurants, and manual jobs",
+  title: "Techto.Earth - Technology for Earthic & Ecologic Use Cases",
+  description: "Intelligent tools and communities that bridge technology with sustainable living, personal transformation, and environmental stewardship. Discover EarthBridge and EcoLog.",
     generator: 'v0.app'
 }
 

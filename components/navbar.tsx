@@ -73,12 +73,12 @@ export default function Navbar() {
                 Products <ChevronDown className="h-4 w-4" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuItem asChild>
                 <Link href="/career-path" className="cursor-pointer">
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">CareerPath</span>
-                    <span className="text-xs text-gray-500">Tech to Earth Transition</span>
+                    <span className="font-medium">EarthBridge</span>
+                    <span className="text-xs text-gray-500">Bridging Tech to Earth Careers</span>
                   </div>
                 </Link>
               </DropdownMenuItem>
@@ -87,7 +87,7 @@ export default function Navbar() {
                 <Link href="/ecolog" className="cursor-pointer">
                   <div className="flex flex-col gap-1">
                     <span className="font-medium">EcoLog</span>
-                    <span className="text-xs text-gray-500">Environment Management</span>
+                    <span className="text-xs text-gray-500">Smart Environment Management</span>
                   </div>
                 </Link>
               </DropdownMenuItem>
@@ -207,7 +207,7 @@ export default function Navbar() {
                   className="block px-4 py-2 text-sm text-gray-600 hover:text-green-700"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  CareerPath
+                  EarthBridge
                 </Link>
                 <Link
                   href="/ecolog"

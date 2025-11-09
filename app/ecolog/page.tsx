@@ -19,7 +19,8 @@ export default function EcoLogHome() {
 
           <p className="max-w-3xl text-lg md:text-xl text-slate-600 mb-8">
             Your intelligent companion for managing healthy, high-performance environments. From growing and production
-            spaces to natural and living systems, EcoLog brings everything together in one smart dashboard.
+            spaces to natural and living systems, EcoLog brings everything together in one smart dashboard. Select any
+            environment to access AI-powered insights, priority tasks, and real-time guidance.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -137,8 +138,9 @@ export default function EcoLogHome() {
               </CardHeader>
               <CardContent className="text-slate-600">
                 <p>
-                  Select any environment to access AI-powered insights, priority tasks, and real-time guidance all in
-                  one place.
+                  Access all your environments in one unified dashboard. View real-time conditions, AI-powered insights,
+                  and priority tasks. Each log combines your photos and notes with automated analysis for complete
+                  traceability.
                 </p>
               </CardContent>
             </Card>
@@ -153,7 +155,8 @@ export default function EcoLogHome() {
               <CardContent className="text-slate-600">
                 <p>
                   Turn on automation to enable intelligent routines, early-warning alerts, and data-driven
-                  recommendations based on environmental signals.
+                  recommendations based on environmental signals and your goals. Catch issues before they become
+                  problems.
                 </p>
               </CardContent>
             </Card>
@@ -167,8 +170,9 @@ export default function EcoLogHome() {
               </CardHeader>
               <CardContent className="text-slate-600">
                 <p>
-                  Every log combines your photos and notes with automated analysis, giving you clarity, traceability,
-                  and confidence in decisions.
+                  Every log combines your photos and notes with automated analysis. Track conditions, catch early
+                  issues, and support long-term health. Every activity is recorded, giving you clarity and confidence
+                  in decisions.
                 </p>
               </CardContent>
             </Card>
@@ -183,7 +187,7 @@ export default function EcoLogHome() {
               <CardContent className="text-slate-600">
                 <p>
                   Get intelligent analysis of conditions, catch early issues, and receive actionable recommendations to
-                  support long-term health.
+                  support long-term health and productivity. Make data-driven decisions with confidence.
                 </p>
               </CardContent>
             </Card>
@@ -286,7 +290,8 @@ export default function EcoLogHome() {
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-emerald-50 mb-8">
             Whether you're optimizing agricultural production, managing a greenhouse, monitoring an ecosystem, or
-            supporting any living system, EcoLog is your intelligent companion.
+            supporting any living system, EcoLog is your intelligent companion. Every activity and insight is recorded,
+            giving you clarity, traceability, and confidence in every decision.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-white text-emerald-700 hover:bg-emerald-50">

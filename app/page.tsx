@@ -25,8 +25,8 @@ export default function Home() {
           </h1>
 
           <p className="max-w-3xl text-xl md:text-2xl text-slate-300 mb-12 text-balance">
-            Intelligent tools and communities for sustainable living. From personal growth to environmental stewardship,
-            discover how technology serves Earth.
+            Technology for earthic and ecologic use cases. We build intelligent tools and communities that bridge
+            technology with sustainable living, personal transformation, and environmental stewardship.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
@@ -50,12 +50,13 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Our Products</h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
-              A suite of intelligent solutions designed to bridge technology and sustainability
+              Intelligent solutions designed for earthic and ecologic use cases — bridging technology with nature,
+              growth, and sustainability
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* CareerPath Product */}
+            {/* EarthBridge Product */}
             <Card className="border-2 border-slate-200 overflow-hidden hover:border-green-500 transition-colors duration-300 group">
               <div className="h-48 bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center group-hover:from-green-100 group-hover:to-emerald-100 transition-colors duration-300">
                 <div className="flex gap-4">
@@ -64,13 +65,13 @@ export default function Home() {
                 </div>
               </div>
               <CardHeader>
-                <CardTitle className="text-2xl text-green-700">CareerPath</CardTitle>
-                <CardDescription className="text-base">From Tech to Earth</CardDescription>
+                <CardTitle className="text-2xl text-green-700">EarthBridge</CardTitle>
+                <CardDescription className="text-base">Bridging Tech to Earth Careers</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-slate-700">
                   A complete transition program for tech professionals seeking meaningful work in agriculture, farming,
-                  restaurants, and manual trades.
+                  restaurants, and manual trades. Your bridge to a more connected life.
                 </p>
                 <ul className="space-y-2 text-sm text-slate-600">
                   <li className="flex gap-2">
@@ -90,7 +91,7 @@ export default function Home() {
               <div className="px-6 pb-6">
                 <Button asChild className="w-full bg-green-600 hover:bg-green-700">
                   <Link href="/career-path">
-                    Explore CareerPath <ArrowRight className="ml-2 h-4 w-4" />
+                    Explore EarthBridge <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </div>
@@ -110,8 +111,8 @@ export default function Home() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-slate-700">
-                  Intelligent companion for managing healthy, high-performance environments. From farms to ecosystems,
-                  track conditions and get AI-powered insights.
+                  Your intelligent companion for managing healthy, high-performance environments. From growing spaces to
+                  natural ecosystems, track conditions, get AI insights, and optimize for long-term health.
                 </p>
                 <ul className="space-y-2 text-sm text-slate-600">
                   <li className="flex gap-2">
