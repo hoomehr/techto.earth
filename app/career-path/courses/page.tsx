@@ -4,16 +4,22 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ArrowRight, BookOpen } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import CourseCard from "@/components/courses/course-card"
+import { sampleCourses } from "@/lib/sample-data"
 
 export default async function CoursesPage() {
   const supabase = createClient()
 
   // Fetch published courses
-  const { data: courses } = await supabase
+  let { data: courses } = await supabase
     .from("courses")
     .select("*")
     .eq("is_published", true)
     .order("created_at", { ascending: false })
+
+  // Use sample data if no courses found
+  if (!courses || courses.length === 0) {
+    courses = sampleCourses
+  }
 
   // Group courses by category
   const categories = [
@@ -35,7 +41,7 @@ export default async function CoursesPage() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-green-50 to-white py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
               <span className="text-green-600">Courses</span> for Your Transition
@@ -56,7 +62,7 @@ export default async function CoursesPage() {
 
       {/* Featured Courses */}
       <section className="py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Featured Courses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses && courses.length > 0 ? (
@@ -83,7 +89,7 @@ export default async function CoursesPage() {
 
       {/* Course Categories */}
       <section className="py-16 bg-green-50" id="all-courses">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Course Categories</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category, index) => {
@@ -119,7 +125,7 @@ export default async function CoursesPage() {
 
       {/* Learning Path */}
       <section className="py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Your Learning Path</h2>
             <p className="max-w-2xl mx-auto text-lg text-gray-600">
@@ -186,7 +192,7 @@ export default async function CoursesPage() {
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-br from-green-600 to-green-700 text-white">
-        <div className="container text-center">
+        <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Start Learning?</h2>
           <p className="max-w-2xl mx-auto text-lg text-green-50 mb-8">
             Join our community of tech professionals transitioning to fulfilling earth-based careers.

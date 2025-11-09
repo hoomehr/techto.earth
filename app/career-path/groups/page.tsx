@@ -5,12 +5,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ArrowRight, Globe, MapPin, MessageSquare, Users } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import GroupCard from "@/components/groups/group-card"
+import { sampleGroups } from "@/lib/sample-data"
 
 export default async function GroupsPage() {
   const supabase = createClient()
 
   // Fetch groups
-  const { data: groups } = await supabase.from("groups").select("*").order("created_at", { ascending: false })
+  let { data: groups } = await supabase.from("groups").select("*").order("created_at", { ascending: false })
+
+  // Use sample data if no groups found
+  if (!groups || groups.length === 0) {
+    groups = sampleGroups
+  }
 
   // Group groups by category
   const categories = [
@@ -27,7 +33,7 @@ export default async function GroupsPage() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-green-50 to-white py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
               <span className="text-green-600">Groups</span> & Communities
@@ -51,7 +57,7 @@ export default async function GroupsPage() {
 
       {/* Featured Groups */}
       <section className="py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Featured Groups</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {groups && groups.length > 0 ? (
@@ -78,7 +84,7 @@ export default async function GroupsPage() {
 
       {/* Group Categories */}
       <section className="py-16 bg-green-50" id="all-groups">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Group Categories</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category, index) => {
@@ -115,7 +121,7 @@ export default async function GroupsPage() {
       {/* Group Spotlight */}
       {spotlightGroup && (
         <section className="py-16">
-          <div className="container">
+          <div className="container mx-auto px-4">
             <div className="bg-white border border-green-100 rounded-xl overflow-hidden shadow-lg">
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 <div className="relative h-64 lg:h-full">
@@ -158,7 +164,7 @@ export default async function GroupsPage() {
 
       {/* Start a Group */}
       <section className="py-16 bg-gradient-to-br from-green-600 to-green-700 text-white">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-4">Start Your Own Group</h2>

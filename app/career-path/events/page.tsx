@@ -6,17 +6,23 @@ import { ArrowRight, Calendar, MapPin, Users } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import EventCard from "@/components/events/event-card"
 import { formatDate } from "@/lib/utils"
+import { sampleEvents } from "@/lib/sample-data"
 
 export default async function EventsPage() {
   const supabase = createClient()
 
   // Fetch published events
-  const { data: events } = await supabase
+  let { data: events } = await supabase
     .from("events")
     .select("*")
     .eq("is_published", true)
     .gte("start_date", new Date().toISOString())
     .order("start_date", { ascending: true })
+
+  // Use sample data if no events found
+  if (!events || events.length === 0) {
+    events = sampleEvents
+  }
 
   // Group events by category
   const categories = [
@@ -53,7 +59,7 @@ export default async function EventsPage() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-green-50 to-white py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
               <span className="text-yellow-600">Events</span> & Workshops
@@ -73,7 +79,7 @@ export default async function EventsPage() {
 
       {/* Upcoming Events */}
       <section className="py-16">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Upcoming Events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events && events.length > 0 ? (
@@ -100,7 +106,7 @@ export default async function EventsPage() {
 
       {/* Event Categories */}
       <section className="py-16 bg-yellow-50" id="all-events">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Event Types</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category) => {
@@ -137,7 +143,7 @@ export default async function EventsPage() {
       {/* Featured Event */}
       {featuredEvent && (
         <section className="py-16">
-          <div className="container">
+          <div className="container mx-auto px-4">
             <div className="bg-white border border-green-100 rounded-xl overflow-hidden shadow-lg">
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 <div className="relative h-64 lg:h-full">
@@ -180,7 +186,7 @@ export default async function EventsPage() {
 
       {/* Host an Event */}
       <section className="py-16 bg-gradient-to-br from-yellow-500 to-yellow-600 text-white">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-4">Host Your Own Event</h2>
