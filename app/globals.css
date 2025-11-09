@@ -132,7 +132,9 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    /* Fixed border color to use CSS variable instead of @apply border-border which doesn't exist in Tailwind v4 */
+    border-color: hsl(var(--border));
+    outline-color: hsl(var(--ring) / 0.5);
   }
   body {
     @apply bg-background text-foreground;
