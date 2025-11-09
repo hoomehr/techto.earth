@@ -6,12 +6,18 @@ import { Globe, MapPin, MessageSquare, Users, ArrowLeft } from "lucide-react"
 import JoinGroupButton from "@/components/groups/join-group-button"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
+import { sampleGroups } from "@/lib/sample-data"
 
 export default async function GroupDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
 
   // Fetch group details
-  const { data: group } = await supabase.from("groups").select("*").eq("id", params.id).single()
+  let { data: group } = await supabase.from("groups").select("*").eq("id", params.id).single()
+
+  // Use sample data if no group found
+  if (!group) {
+    group = sampleGroups.find((g) => g.id === params.id)
+  }
 
   if (!group) {
     notFound()
@@ -39,7 +45,7 @@ export default async function GroupDetailPage({ params }: { params: { id: string
     .eq("group_id", group.id)
 
   return (
-    <div className="container py-8">
+    <div className="container mx-auto px-4 py-8">
       <Link href="/groups" className="flex items-center text-green-600 hover:text-green-700 mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Groups

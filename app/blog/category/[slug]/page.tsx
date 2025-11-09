@@ -39,7 +39,7 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
     .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
 
   return (
-    <div className="container py-12">
+    <div className="container mx-auto px-4 py-12">
       <Link href="/blog" className="flex items-center text-green-600 hover:text-green-700 mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Blog

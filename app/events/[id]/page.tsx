@@ -7,12 +7,18 @@ import RegisterButton from "@/components/events/register-button"
 import Link from "next/link"
 import { formatDate, formatTime } from "@/lib/utils"
 import { getImageUrl } from "@/lib/image-utils"
+import { sampleEvents } from "@/lib/sample-data"
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
 
   // Fetch event details
-  const { data: event } = await supabase.from("events").select("*").eq("id", params.id).single()
+  let { data: event } = await supabase.from("events").select("*").eq("id", params.id).single()
+
+  // Use sample data if no event found
+  if (!event) {
+    event = sampleEvents.find((e) => e.id === params.id)
+  }
 
   if (!event || !event.is_published) {
     notFound()
@@ -27,7 +33,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
   }
 
   return (
-    <div className="container py-8">
+    <div className="container mx-auto px-4 py-8">
       <Link href="/events" className="flex items-center text-green-600 hover:text-green-700 mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Events

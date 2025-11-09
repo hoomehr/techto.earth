@@ -6,12 +6,18 @@ import { Clock, Users, BookOpen, Star, ArrowLeft } from "lucide-react"
 import EnrollButton from "@/components/courses/enroll-button"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
+import { sampleCourses } from "@/lib/sample-data"
 
 export default async function CourseDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
 
   // Fetch course details
-  const { data: course } = await supabase.from("courses").select("*").eq("id", params.id).single()
+  let { data: course } = await supabase.from("courses").select("*").eq("id", params.id).single()
+
+  // Use sample data if no course found
+  if (!course) {
+    course = sampleCourses.find((c) => c.id === params.id)
+  }
 
   if (!course || !course.is_published) {
     notFound()
@@ -33,7 +39,7 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
   }
 
   return (
-    <div className="container py-8">
+    <div className="container mx-auto px-4 py-8">
       <Link href="/courses" className="flex items-center text-green-600 hover:text-green-700 mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Courses

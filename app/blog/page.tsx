@@ -20,7 +20,7 @@ export default async function BlogPage() {
   const { data: categories } = await supabase.from("blog_categories").select("*")
 
   return (
-    <div className="container py-12">
+    <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
           <span className="text-green-600">Blog</span> & Success Stories
