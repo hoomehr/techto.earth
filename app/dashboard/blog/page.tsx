@@ -3,12 +3,10 @@ import { createClient } from "@/utils/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Edit, FileText, Trash } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Edit, Plus, Trash } from "lucide-react"
 
 export default async function DashboardBlogPage() {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const {
     data: { user },
@@ -21,25 +19,18 @@ export default async function DashboardBlogPage() {
     .eq("author_id", user?.id)
     .order("created_at", { ascending: false })
 
-  // Fetch recent public posts
-  const { data: recentPosts } = await supabase
-    .from("blog_posts")
-    .select("*, profiles(full_name)")
-    .eq("published", true)
-    .order("created_at", { ascending: false })
-    .limit(5)
-
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">My Blog Posts</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">My Blog Posts</h1>
+        <Button className="bg-green-600 hover:bg-green-700" asChild>
+          <Link href="/dashboard/blog/create">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Post
+          </Link>
+        </Button>
+      </div>
 
-      <Tabs defaultValue="my-posts" className="mb-8">
-        <TabsList className="mb-4">
-          <TabsTrigger value="my-posts">My Posts</TabsTrigger>
-          <TabsTrigger value="recent">Recent Posts</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="my-posts">
       {posts && posts.length > 0 ? (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <Table>
@@ -101,52 +92,13 @@ export default async function DashboardBlogPage() {
         <div className="bg-white rounded-lg shadow p-8 text-center">
           <p className="text-gray-500 mb-4">You haven't created any blog posts yet.</p>
           <Button className="bg-green-600 hover:bg-green-700" asChild>
-                <Link href="/blog">Browse Blog</Link>
+            <Link href="/dashboard/blog/create">
+              <Plus className="h-4 w-4 mr-2" />
+              Create Your First Post
+            </Link>
           </Button>
         </div>
       )}
-        </TabsContent>
-
-        <TabsContent value="recent">
-          {recentPosts && recentPosts.length > 0 ? (
-            <div className="space-y-6">
-              {recentPosts.map((post) => (
-                <Card key={post.id}>
-                  <CardHeader>
-                    <CardTitle>{post.title}</CardTitle>
-                    <CardDescription>
-                      By {post.profiles?.full_name || 'Anonymous'} • 
-                      {new Date(post.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">{post.excerpt || post.content?.substring(0, 150)}</p>
-                    <Button variant="outline" asChild>
-                      <Link href={`/blog/${post.slug}`}>
-                        Read More
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-
-              <div className="mt-6 text-center">
-                <Button variant="outline" asChild>
-                  <Link href="/blog">View All Posts</Link>
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
-              <p className="text-gray-500">No published posts available yet.</p>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
     </div>
   )
 }

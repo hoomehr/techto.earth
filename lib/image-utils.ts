@@ -1,5 +1,5 @@
 // Define a set of fallback images for different categories
-const fallbackImages: Record<string, string> = {
+const fallbackImages = {
   // Courses
   farming:
     "https://images.unsplash.com/photo-1500076656116-558758c991c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZhcm18ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
@@ -34,7 +34,7 @@ const fallbackImages: Record<string, string> = {
     "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
   craftsmanship:
     "https://images.unsplash.com/photo-1567964217888-c8a3651b4a4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8d29vZHdvcmtpbmd8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
-  "sustainability-blog":
+  sustainability:
     "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c3VzdGFpbmFiaWxpdHl8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
 
   // Specific blog posts
@@ -55,18 +55,18 @@ const defaultFallback =
  */
 export function getImageUrl(imageUrl: string | null | undefined, category?: string, slug?: string): string {
   // If a valid image URL is provided, use it
-  if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith("http")) {
+  if (imageUrl && imageUrl.startsWith("http")) {
     return imageUrl
   }
 
   // Try to find a fallback based on slug
-  if (slug && typeof slug === 'string' && fallbackImages[slug]) {
-    return fallbackImages[slug]
+  if (slug && fallbackImages[slug as keyof typeof fallbackImages]) {
+    return fallbackImages[slug as keyof typeof fallbackImages]
   }
 
   // Try to find a fallback based on category
-  if (category && typeof category === 'string' && fallbackImages[category]) {
-    return fallbackImages[category]
+  if (category && fallbackImages[category as keyof typeof fallbackImages]) {
+    return fallbackImages[category as keyof typeof fallbackImages]
   }
 
   // Return default fallback

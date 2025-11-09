@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, Link as LinkIcon } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function CreateCoursePage() {
@@ -25,7 +25,6 @@ export default function CreateCoursePage() {
   const [description, setDescription] = useState("")
   const [content, setContent] = useState("")
   const [imageUrl, setImageUrl] = useState("")
-  const [materialsUrl, setMaterialsUrl] = useState("")
   const [category, setCategory] = useState("")
   const [level, setLevel] = useState("")
   const [duration, setDuration] = useState("")
@@ -46,50 +45,25 @@ export default function CreateCoursePage() {
     setError(null)
 
     try {
-      // Insert the course and get the course ID
-      const { data: newCourse, error: courseError } = await supabase
-        .from("courses")
-        .insert({
-          title,
-          description,
-          content,
-          image_url: imageUrl,
-          materials_url: materialsUrl,
-          category,
-          level,
-          duration,
-          price: Number.parseFloat(price),
-          created_by: user.id,
-          is_published: isPublished,
-        })
-        .select()
-        .single()
+      const { error } = await supabase.from("courses").insert({
+        title,
+        description,
+        content,
+        image_url: imageUrl,
+        category,
+        level,
+        duration,
+        price: Number.parseFloat(price),
+        created_by: user.id,
+        is_published: isPublished,
+      })
 
-      if (courseError) {
-        setError(courseError.message)
-        return
+      if (error) {
+        setError(error.message)
+      } else {
+        router.push("/dashboard/courses")
+        router.refresh()
       }
-
-      // Automatically enroll the creator in their own course
-      if (newCourse) {
-        const { error: enrollmentError } = await supabase
-          .from("course_enrollments")
-          .insert({
-            user_id: user.id,
-            course_id: newCourse.id,
-            status: 'active',
-            progress: 0,
-          })
-
-        if (enrollmentError) {
-          console.error("Failed to enroll creator in course:", enrollmentError)
-          // We don't return here because the course was created successfully
-          // The user can still manually enroll later
-        }
-      }
-
-      router.push("/dashboard/courses")
-      router.refresh()
     } catch (error) {
       setError("An unexpected error occurred")
     } finally {
@@ -149,23 +123,6 @@ export default function CreateCoursePage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="materialsUrl">
-                <div className="flex items-center gap-1">
-                  <LinkIcon className="h-4 w-4" /> 
-                  Materials URL
-                </div>
-              </Label>
-              <Input
-                id="materialsUrl"
-                value={materialsUrl}
-                onChange={(e) => setMaterialsUrl(e.target.value)}
-                placeholder="https://example.com/course-materials"
-                type="url"
-              />
-              <p className="text-sm text-gray-500">Link to access online course materials (videos, slides, downloads, etc.)</p>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
@@ -178,8 +135,6 @@ export default function CreateCoursePage() {
                     <SelectItem value="restaurant">Restaurant & Food Service</SelectItem>
                     <SelectItem value="crafts">Craftsmanship & Trades</SelectItem>
                     <SelectItem value="business">Business & Entrepreneurship</SelectItem>
-                    <SelectItem value="education">Education & Community</SelectItem>
-                    <SelectItem value="sustainability">Sustainability & Conservation</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

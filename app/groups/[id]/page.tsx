@@ -8,7 +8,7 @@ import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
 
 export default async function GroupDetailPage({ params }: { params: { id: string } }) {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   // Fetch group details
   const { data: group } = await supabase.from("groups").select("*").eq("id", params.id).single()

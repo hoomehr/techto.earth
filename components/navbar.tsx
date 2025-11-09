@@ -3,9 +3,8 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Leaf, Menu, X, Shield } from "lucide-react"
+import { Leaf, Menu, X, ChevronDown } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
-import { useAdmin } from "@/context/admin-context"
 import { useState } from "react"
 import {
   DropdownMenu,
@@ -21,8 +20,8 @@ export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, loading, signOut } = useAuth()
-  const { isAdmin, loading: adminLoading } = useAdmin()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [productsOpen, setProductsOpen] = useState(false)
 
   const isActive = (path: string) => {
     return pathname === path ? "bg-green-100 text-green-800" : "text-gray-700 hover:bg-yellow-50"
@@ -43,13 +42,17 @@ export default function Navbar() {
       .substring(0, 2)
   }
 
+  const isOnCareerPath = pathname.startsWith("/career-path")
+  const isOnEcoLog = pathname.startsWith("/ecolog")
+  const isOnHome = pathname === "/"
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Leaf className="h-6 w-6 text-green-600" />
           <span className="text-xl font-bold text-green-800">
-            TechTo<span className="text-yellow-600">.Earth</span>
+            Techto<span className="text-emerald-600">.Earth</span>
           </span>
         </Link>
 
@@ -59,19 +62,84 @@ export default function Navbar() {
         </button>
 
         {/* Desktop navigation */}
-        <nav className="hidden md:flex gap-6">
-          <Link href="/" className={`px-4 py-2 rounded-md font-medium ${isActive("/")}`}>
+        <nav className="hidden md:flex gap-2 items-center">
+          <Link href="/" className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/")}`}>
             Home
           </Link>
-          <Link href="/courses" className={`px-4 py-2 rounded-md font-medium ${isActive("/courses")}`}>
-            Courses
-          </Link>
-          <Link href="/events" className={`px-4 py-2 rounded-md font-medium ${isActive("/events")}`}>
-            Events
-          </Link>
-          <Link href="/groups" className={`px-4 py-2 rounded-md font-medium ${isActive("/groups")}`}>
-            Groups
-          </Link>
+
+          <DropdownMenu open={productsOpen} onOpenChange={setProductsOpen}>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 px-4 py-2 rounded-md font-medium text-sm text-gray-700 hover:bg-yellow-50">
+                Products <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href="/career-path" className="cursor-pointer">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">CareerPath</span>
+                    <span className="text-xs text-gray-500">Tech to Earth Transition</span>
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/ecolog" className="cursor-pointer">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">EcoLog</span>
+                    <span className="text-xs text-gray-500">Environment Management</span>
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Product-specific navigation links */}
+          {isOnCareerPath && (
+            <>
+              <Link
+                href="/career-path/courses"
+                className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/career-path/courses")}`}
+              >
+                Courses
+              </Link>
+              <Link
+                href="/career-path/events"
+                className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/career-path/events")}`}
+              >
+                Events
+              </Link>
+              <Link
+                href="/career-path/groups"
+                className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/career-path/groups")}`}
+              >
+                Groups
+              </Link>
+            </>
+          )}
+
+          {isOnEcoLog && (
+            <>
+              <Link href="/ecolog" className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/ecolog")}`}>
+                Dashboard
+              </Link>
+            </>
+          )}
+
+          {/* Show all original navigation on home */}
+          {isOnHome && (
+            <>
+              <Link href="/courses" className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/courses")}`}>
+                Courses
+              </Link>
+              <Link href="/events" className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/events")}`}>
+                Events
+              </Link>
+              <Link href="/groups" className={`px-4 py-2 rounded-md font-medium text-sm ${isActive("/groups")}`}>
+                Groups
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* Desktop auth buttons */}
@@ -80,7 +148,7 @@ export default function Navbar() {
             <>
               <Button
                 variant="outline"
-                className="border-green-600 text-green-700 hover:bg-green-50"
+                className="border-green-600 text-green-700 hover:bg-green-50 bg-transparent"
                 onClick={() => router.push("/auth")}
               >
                 Sign In
@@ -112,11 +180,6 @@ export default function Navbar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.push("/dashboard")}>Dashboard</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>Profile</DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem onClick={() => router.push("/admin")}>
-                    <Shield className="mr-2 h-4 w-4" /> Admin Panel
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
@@ -125,7 +188,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <div className="container py-4 space-y-4">
@@ -137,36 +199,84 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link
-                href="/courses"
-                className={`px-4 py-2 rounded-md font-medium ${isActive("/courses")}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Courses
-              </Link>
-              <Link
-                href="/events"
-                className={`px-4 py-2 rounded-md font-medium ${isActive("/events")}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Events
-              </Link>
-              <Link
-                href="/groups"
-                className={`px-4 py-2 rounded-md font-medium ${isActive("/groups")}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Groups
-              </Link>
+
+              <div className="px-4 py-2 rounded-md font-medium text-gray-700 space-y-2">
+                <p className="font-medium">Products</p>
+                <Link
+                  href="/career-path"
+                  className="block px-4 py-2 text-sm text-gray-600 hover:text-green-700"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  CareerPath
+                </Link>
+                <Link
+                  href="/ecolog"
+                  className="block px-4 py-2 text-sm text-gray-600 hover:text-green-700"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  EcoLog
+                </Link>
+              </div>
+
+              {isOnCareerPath && (
+                <>
+                  <Link
+                    href="/career-path/courses"
+                    className={`px-4 py-2 rounded-md font-medium ${isActive("/career-path/courses")}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Courses
+                  </Link>
+                  <Link
+                    href="/career-path/events"
+                    className={`px-4 py-2 rounded-md font-medium ${isActive("/career-path/events")}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Events
+                  </Link>
+                  <Link
+                    href="/career-path/groups"
+                    className={`px-4 py-2 rounded-md font-medium ${isActive("/career-path/groups")}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Groups
+                  </Link>
+                </>
+              )}
+
+              {isOnHome && (
+                <>
+                  <Link
+                    href="/courses"
+                    className={`px-4 py-2 rounded-md font-medium ${isActive("/courses")}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Courses
+                  </Link>
+                  <Link
+                    href="/events"
+                    className={`px-4 py-2 rounded-md font-medium ${isActive("/events")}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Events
+                  </Link>
+                  <Link
+                    href="/groups"
+                    className={`px-4 py-2 rounded-md font-medium ${isActive("/groups")}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Groups
+                  </Link>
+                </>
+              )}
             </nav>
 
-            {/* Mobile auth buttons */}
-            <div className="border-t pt-4">
+            <div className="flex flex-col space-y-2">
               {!loading && !user ? (
-                <div className="flex flex-col space-y-2">
+                <>
                   <Button
                     variant="outline"
-                    className="w-full justify-center border-green-600 text-green-700 hover:bg-green-50"
+                    className="w-full border-green-600 text-green-700 hover:bg-green-50 bg-transparent"
                     onClick={() => {
                       router.push("/auth")
                       setMobileMenuOpen(false)
@@ -175,7 +285,7 @@ export default function Navbar() {
                     Sign In
                   </Button>
                   <Button
-                    className="w-full justify-center bg-yellow-500 hover:bg-yellow-600 text-white"
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
                     onClick={() => {
                       router.push("/auth")
                       setMobileMenuOpen(false)
@@ -183,7 +293,7 @@ export default function Navbar() {
                   >
                     Join Now
                   </Button>
-                </div>
+                </>
               ) : (
                 <>
                   <div className="px-4 py-2 border-b">
@@ -210,18 +320,6 @@ export default function Navbar() {
                   >
                     Profile
                   </Button>
-                  {isAdmin && (
-                    <Button
-                      variant="ghost"
-                      className="justify-start"
-                      onClick={() => {
-                        router.push("/admin")
-                        setMobileMenuOpen(false)
-                      }}
-                    >
-                      <Shield className="mr-2 h-4 w-4" /> Admin Panel
-                    </Button>
-                  )}
                   <Button
                     variant="ghost"
                     className="justify-start text-red-600 hover:text-red-700 hover:bg-red-50"

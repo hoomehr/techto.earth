@@ -9,11 +9,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    browserDepCheck: false
-  },
-  reactStrictMode: true,
-  transpilePackages: ['react-day-picker', 'vaul']
 }
 
 export default nextConfig
