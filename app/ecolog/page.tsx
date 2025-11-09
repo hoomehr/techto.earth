@@ -7,7 +7,7 @@ export default function EcoLogHome() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-emerald-50 to-white py-20 md:py-28">
-        <div className="container flex flex-col items-center text-center">
+        <div className="container mx-auto px-4 flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 bg-emerald-100 rounded-full px-4 py-2 mb-6">
             <BarChart3 className="h-5 w-5 text-emerald-600" />
             <span className="text-sm font-medium text-emerald-800">Smart Environment Management</span>
@@ -41,7 +41,7 @@ export default function EcoLogHome() {
 
       {/* Use Cases */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Designed for Every Environment</h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
@@ -120,7 +120,7 @@ export default function EcoLogHome() {
 
       {/* Key Features */}
       <section className="py-16 md:py-24 bg-slate-50">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Powerful Features</h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
@@ -227,7 +227,7 @@ export default function EcoLogHome() {
 
       {/* How It Works */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">How EcoLog Works</h2>
           </div>
@@ -284,7 +284,7 @@ export default function EcoLogHome() {
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
-        <div className="container text-center">
+        <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Intelligence for Every Environment That Grows, Produces, or Sustains Life
           </h2>

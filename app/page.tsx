@@ -7,36 +7,36 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-24 md:py-32 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-green-500 rounded-full mix-blend-screen filter blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-emerald-500 rounded-full mix-blend-screen filter blur-3xl"></div>
+      <section className="relative bg-gradient-to-b from-white via-green-50/30 to-white py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-72 h-72 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
         </div>
 
-        <div className="container relative z-10 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-2 mb-8">
-            <Sprout className="h-4 w-4 text-green-400" />
-            <span className="text-sm font-medium text-green-300">Technology for Earth</span>
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2 bg-green-100 border border-green-200 rounded-full px-4 py-2 mb-8">
+            <Sprout className="h-4 w-4 text-green-600" />
+            <span className="text-sm font-medium text-green-700">Technology for Earth</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-7xl font-bold tracking-tight mb-6 text-balance">
+          <h1 className="text-5xl md:text-7xl lg:text-7xl font-bold tracking-tight mb-6 text-balance text-slate-900">
             Techto{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Earth</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600">Earth</span>
           </h1>
 
-          <p className="max-w-3xl text-xl md:text-2xl text-slate-300 mb-12 text-balance">
+          <p className="max-w-3xl text-xl md:text-2xl text-slate-600 mb-12 text-balance">
             Technology for earthic and ecologic use cases. We build intelligent tools and communities that bridge
             technology with sustainable living, personal transformation, and environmental stewardship.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 mb-16 justify-center">
             <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
               Explore Products
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-slate-400 text-slate-200 hover:bg-slate-700 bg-transparent"
+              className="border-green-600 text-green-700 hover:bg-green-50 bg-transparent"
             >
               Learn More
             </Button>
@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* Products Grid */}
       <section className="py-20 md:py-28 bg-white">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Our Products</h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
@@ -143,7 +143,7 @@ export default function Home() {
 
       {/* Why Techto Earth */}
       <section className="py-20 md:py-28 bg-slate-50">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Why Techto Earth</h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
@@ -195,7 +195,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-        <div className="container text-center">
+        <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Make a Difference?</h2>
           <p className="max-w-2xl mx-auto text-lg text-green-50 mb-8">
             Join thousands of people building a better relationship between technology and nature.

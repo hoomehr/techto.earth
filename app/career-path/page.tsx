@@ -9,7 +9,7 @@ export default function CareerPathHome() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-green-50 to-white py-20 md:py-28">
-        <div className="container flex flex-col items-center text-center">
+        <div className="container mx-auto px-4 flex flex-col items-center text-center">
           <div className="flex items-center justify-center mb-6 space-x-2">
             <Code className="h-8 w-8 text-gray-600" />
             <ArrowRight className="h-6 w-6 text-yellow-500" />
@@ -43,7 +43,7 @@ export default function CareerPathHome() {
 
       {/* Features Section */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Make The Switch?</h2>
             <p className="max-w-2xl mx-auto text-lg text-gray-600">
@@ -101,7 +101,7 @@ export default function CareerPathHome() {
 
       {/* Main Sections Preview */}
       <section className="py-16 bg-green-50">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How We Help You Transition</h2>
             <p className="max-w-2xl mx-auto text-lg text-gray-600">
@@ -182,7 +182,7 @@ export default function CareerPathHome() {
 
       {/* Testimonials */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Success Stories</h2>
             <p className="max-w-2xl mx-auto text-lg text-gray-600">
@@ -242,7 +242,7 @@ export default function CareerPathHome() {
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-br from-green-600 to-green-700 text-white">
-        <div className="container text-center">
+        <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Make the Transition?</h2>
           <p className="max-w-2xl mx-auto text-lg text-green-50 mb-8">
             Join thousands of tech professionals who have found fulfillment in working with the earth.
