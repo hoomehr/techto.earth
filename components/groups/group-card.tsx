@@ -37,7 +37,7 @@ export default function GroupCard({ group }: GroupCardProps) {
       })
 
       if (!error) {
-        router.push(`/groups/${group.id}`)
+        router.push(`/career-path/groups/${group.id}`)
         router.refresh()
       }
     } catch (error) {
@@ -56,7 +56,7 @@ export default function GroupCard({ group }: GroupCardProps) {
   }
 
   return (
-    <Link href={`/groups/${group.id}`} className="block hover:no-underline">
+    <Link href={`/career-path/groups/${group.id}`} className="block hover:no-underline">
       <Card className="overflow-hidden transition-all duration-300 h-full group hover:shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:translate-y-[-5px]">
         <div className="relative h-48 w-full overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10" />

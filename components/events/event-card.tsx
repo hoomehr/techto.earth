@@ -38,7 +38,7 @@ export default function EventCard({ event }: EventCardProps) {
       })
 
       if (!error) {
-        router.push(`/events/${event.id}`)
+        router.push(`/career-path/events/${event.id}`)
         router.refresh()
       }
     } catch (error) {
@@ -57,7 +57,7 @@ export default function EventCard({ event }: EventCardProps) {
   }
 
   return (
-    <Link href={`/events/${event.id}`} className="block hover:no-underline">
+    <Link href={`/career-path/events/${event.id}`} className="block hover:no-underline">
       <Card className="overflow-hidden transition-all duration-300 h-full group hover:shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:translate-y-[-5px]">
         <div className="relative h-48 w-full overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10" />
